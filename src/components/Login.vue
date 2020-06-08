@@ -18,8 +18,8 @@
                     type="password"></el-input>
         </el-form-item>
         <el-form-item class="btns">
-          <el-button type="primary" @click="login">登录</el-button>
-          <el-button type="info" >重置</el-button>
+          <el-button type="primary" @click="loginValidate">登录</el-button>
+          <el-button type="info" @click="loginFormReset">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -38,16 +38,26 @@
           loginRules: {
             username: [
               { required: true, message: '请输入账号', trigger: 'blur' },
-              { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+              { min: 6, max: 12, message: '请输入正确的账号格式', trigger: 'blur' }
             ],
             password: [
               { required: true, message: '请输入密码', trigger: 'blur' },
-              { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }
+              { min: 8, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
             ]
           }
         }
       },
         methods: {
+          loginFormReset () {
+            this.$refs.loginForm.resetFields()
+          },
+          // 登录
+          loginValidate () {
+            this.$refs.loginForm.validate((validate) => {
+              if (!validate) return false
+              this.login()
+            })
+          },
             login() {
                 //location.href="#/Main";
                 this.axios({
@@ -60,12 +70,25 @@
                     }
                 })
                     .then(res => {
-                        console.log("aaaaaaa")
+                        console.log(res.data.status);
+                        if (res.data.status=='success'){
+                          this.$store.state.id=res.data.userId;
+                          this.$message({
+                            message: '恭喜你登录成功！',
+                            type: 'success'
+                          });
+                          this.$router.push('/Main');
+                        }else if(res.data.status=='error'){
+                          this.$message({
+                            message: res.data.msg,
+                            type: 'warning'
+                          });
+                        }
                     })
                     .catch(err => {
                         console.error(err);
                     })
-                this.$router.push('/Main');
+
             }
         }
     }

@@ -9,7 +9,7 @@ import '@/common/element.js'
 import '@/assets/fonts/iconfont.css'
 import vueaxios from 'vue-axios'
 import axios from 'axios'
-
+import store from '@/store.js'
 axios.defaults.withCredentials=true;
 
 Vue.use(ElementUI)
@@ -22,5 +22,6 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  store
 })
