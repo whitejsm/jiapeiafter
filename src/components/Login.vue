@@ -4,7 +4,7 @@
       <div class="login-head">
         <img src="@/assets/img/1.jpg" alt="">
       </div>
-      <el-form  class="login-form">
+      <el-form  :model="loginForm" :rules="loginRules" ref="loginForm" class="login-form">
         <el-form-item prop="username">
           <el-input prefix-icon="iconfont icon-user"
                     v-model="loginForm.username"
@@ -37,7 +37,7 @@
           },
           loginRules: {
             username: [
-              { required: true, message: '请输入工号', trigger: 'blur' },
+              { required: true, message: '请输入账号', trigger: 'blur' },
               { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
             ],
             password: [
