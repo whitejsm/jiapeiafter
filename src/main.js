@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import '@/common/element.js'
+import '@/assets/fonts/iconfont.css'
 
 Vue.use(ElementUI)
 
