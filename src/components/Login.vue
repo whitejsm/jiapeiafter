@@ -7,7 +7,7 @@
       <el-form  class="login-form">
         <el-form-item prop="username">
           <el-input prefix-icon="iconfont icon-user"
-                    placeholder="请输入工号"
+                    placeholder="请输入账号"
                    ></el-input>
         </el-form-item>
         <el-form-item prop="password">
