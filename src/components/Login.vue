@@ -2,7 +2,7 @@
   <div class="login">
     <div class="login-box">
       <div class="login-head">
-        <img src="@/assets/img/2018072993152_Uu2JV.jpeg" alt="">
+        <img src="@/assets/img/1.jpg" alt="">
       </div>
       <el-form  class="login-form">
         <el-form-item prop="username">
