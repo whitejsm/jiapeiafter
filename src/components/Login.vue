@@ -7,13 +7,14 @@
       <el-form  class="login-form">
         <el-form-item prop="username">
           <el-input prefix-icon="iconfont icon-user"
+                    v-model="loginForm.username"
                     placeholder="请输入账号"
                    ></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input prefix-icon="iconfont icon-3702mima"
                     placeholder="请输入密码"
-
+                    v-model="loginForm.password"
                     type="password"></el-input>
         </el-form-item>
         <el-form-item class="btns">
@@ -27,7 +28,25 @@
 
 <script>
     export default {
-        name: "Login"
+        name: "Login",
+        data () {
+        return {
+          loginForm: {
+            username: '',
+            password: ''
+          },
+          loginRules: {
+            username: [
+              { required: true, message: '请输入工号', trigger: 'blur' },
+              { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+            ],
+            password: [
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }
+            ]
+          }
+        }
+      },
     }
 </script>
 
