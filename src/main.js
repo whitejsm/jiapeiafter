@@ -7,8 +7,13 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/common/element.js'
 import '@/assets/fonts/iconfont.css'
+import vueaxios from 'vue-axios'
+import axios from 'axios'
+
+axios.defaults.withCredentials=true;
 
 Vue.use(ElementUI)
+Vue.use(vueaxios, axios)
 
 Vue.config.productionTip = false
 

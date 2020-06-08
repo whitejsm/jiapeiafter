@@ -18,7 +18,7 @@
                     type="password"></el-input>
         </el-form-item>
         <el-form-item class="btns">
-          <el-button type="primary" >登录</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" >重置</el-button>
         </el-form-item>
       </el-form>
@@ -47,6 +47,27 @@
           }
         }
       },
+        methods: {
+            login() {
+                //location.href="#/Main";
+                this.axios({
+                    headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+                    method:'get',
+                    url: 'http://localhost:9000/login',
+                    params: {
+                        uname:this.loginForm.username,
+                        upass:this.loginForm.password
+                    }
+                })
+                    .then(res => {
+                        console.log("aaaaaaa")
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    })
+                this.$router.push('/Main');
+            }
+        }
     }
 </script>
 
