@@ -19,7 +19,7 @@ export default new Router({
       {path: '/Main', name: 'main', component: Main,
         children:[
           {component:ht,path:"/ht"},
-          {component:order,path:"/order"},
+          {component:order,path:"/order1111"},
           {component:FindALL,path:"/customer/FindALL"},
           {component:bedInfo,path:"/bed/bedInfo"}
         ]}

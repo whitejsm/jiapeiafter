@@ -170,7 +170,6 @@
           <option value="10">10</option>
           <option value="15">15</option>
         </select>
-        条
     </div></center>
     
    
