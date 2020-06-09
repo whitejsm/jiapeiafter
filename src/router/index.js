@@ -4,13 +4,14 @@ import Main from '@/components/Main'
 import Login from '@/components/Login'
 import ht from '@/components/ht'
 import order from '@/components/order'
+import FindALL from '@/components/customer/FindAll'
 
-Vue.use(Router)
+Vue.use(Router);
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
-}
+};
 
 export default new Router({
     routes: [
@@ -18,7 +19,8 @@ export default new Router({
       {path: '/Main', name: 'main', component: Main,
         children:[
           {component:ht,path:"/ht"},
-          {component:order,path:"/order"}
+          {component:order,path:"/order"},
+          {component:FindALL,path:"/customer/FindALL"}
         ]}
     ]
 })

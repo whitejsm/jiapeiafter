@@ -73,6 +73,7 @@
                         console.log(res.data.status);
                         if (res.data.status=='success'){
                           this.$store.state.id=res.data.userId;
+                          this.$store.state.userName=res.data.userName;
                           this.$message({
                             message: '恭喜你登录成功！',
                             type: 'success'

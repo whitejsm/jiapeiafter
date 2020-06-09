@@ -2,15 +2,15 @@
   <div>
     <el-container style="height: 1000px; border: 1px solid #eee">
       <el-header style="text-align: right; font-size: 12px">
-        <el-dropdown>
-          <i class="el-icon-setting" style="margin-right: 15px"></i>
+        <el-dropdown @command="handleCommand">
+          <span class="el-dropdown-link">
+            {{this.$store.state.userName}}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>查看</el-dropdown-item>
-            <el-dropdown-item>新增</el-dropdown-item>
-            <el-dropdown-item>删除</el-dropdown-item>
+            <el-dropdown-item command="a">个人信息</el-dropdown-item>
+            <el-dropdown-item command="b">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span>王小虎</span>
       </el-header>
       <el-container>
         <el-aside  style="width: 255px;background-color: rgb(238, 241, 246)">
@@ -50,11 +50,9 @@
     export default {
         data() {
             return {
-              tableData: [],
-                searchInput: '',
-                value1: '',
-                value: '',
+                tableData: [],
                 permissionList: null,
+                userName:'',
             }
         },
         methods: {
@@ -64,6 +62,9 @@
             handleClose(key, keyPath) {
                 console.log(key, keyPath);
             },
+            handleCommand(command) {
+              this.$message('click on item ' + command);
+            }
         },
         mounted() {
           this.axios({
@@ -81,11 +82,12 @@
             })
             .catch(err => {
               console.error(err);
-            })
+            });
 
           console.log(this.activeIndex);
           console.log(this.$route.path);
           this.activeIndex = this.$route.path.substring(1,this.$route.path.length);
+
         }
     }
 </script>
@@ -99,5 +101,12 @@
 
   .el-aside {
     color: #333;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    color: black;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
 </style>
