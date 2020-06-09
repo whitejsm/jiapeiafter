@@ -110,7 +110,7 @@
         label="操作"
         width="200">
         <template slot-scope="scope">
-          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.name,scope.row.phonenumber,scope.row.customerId)">编辑信息</el-button>
+          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.name,scope.row.phonenumber,scope.row.customerId,scope.row.isdelete)">编辑信息</el-button>
           <el-button type="info"  size="small" plain @click="showOrders(scope.row.customerId)">订单信息</el-button>
         </template>
       </el-table-column>
@@ -136,6 +136,13 @@
           <el-input v-model="form.phonenumber" autocomplete="off"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'');"
                     maxlength="11"></el-input>
+        </el-form-item>
+        <el-form-item label="账号是否启用" :label-width="formLabelWidth">
+        <el-switch
+          v-model="form.status"
+          active-text="禁用"
+          inactive-text="启用">
+        </el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -224,6 +231,7 @@
           name: '',
           phonenumber:'',
           customerId:'',
+          status:'',
         },
         formLabelWidth: '120px',
         countOrders:''
@@ -236,11 +244,12 @@
           this.sex='';
           this.searchInput=''
       },
-      showUpdate(name,phonenumber,customerId){
+      showUpdate(name,phonenumber,customerId,isdelete){
         this.dialogFormVisible=true;
         this.form.name=name;
         this.form.phonenumber=phonenumber;
         this.form.customerId=customerId;
+        this.form.status=isdelete;
       },
       showOrders(customerId){
         this.dialogTableVisible=true;
@@ -273,7 +282,8 @@
           params:{
             name:this.form.name,
             phonenumber:this.form.phonenumber,
-            customerId:this.form.customerId
+            customerId:this.form.customerId,
+            isdelete:this.form.status
           }
         })
           .then(res => {
