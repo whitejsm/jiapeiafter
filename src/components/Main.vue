@@ -1,7 +1,10 @@
 <template>
   <div>
     <el-container style="height: 1000px; border: 1px solid #eee">
-      <el-header style="text-align: right; font-size: 12px">
+      <el-header style="text-align: right; font-size: 12px" >
+        <div style="float:left;font-size: 25px">
+          佳陪后台管理系统
+        </div>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             {{this.$store.state.userName}}<i class="el-icon-arrow-down el-icon--right"></i>
