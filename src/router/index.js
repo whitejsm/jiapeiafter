@@ -5,7 +5,7 @@ import Login from '@/components/Login'
 import ht from '@/components/ht'
 import order from '@/components/order'
 import FindALL from '@/components/customer/FindAll'
-
+import bedInfo from '@/components/bed/bedInfo'
 Vue.use(Router);
 
 const originalPush = Router.prototype.push
@@ -20,7 +20,8 @@ export default new Router({
         children:[
           {component:ht,path:"/ht"},
           {component:order,path:"/order"},
-          {component:FindALL,path:"/customer/FindALL"}
+          {component:FindALL,path:"/customer/FindALL"},
+          {component:bedInfo,path:"/bed/bedInfo"}
         ]}
     ]
 })
