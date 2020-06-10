@@ -60,6 +60,7 @@
       </el-divider>
     </div>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
       style="width: 100%">
@@ -181,6 +182,7 @@
     name: "order",
     data() {
       return {
+        loading:true,
         sexs: [{
           sex: '1',
           label: '男'
@@ -315,27 +317,6 @@
           params:{
             "pageNum":this.pageNum,
             "pageSize":this.pageSize,
-          }
-        })
-          .then(res => {
-            console.log(res.data);
-            this.tableData = res.data.customerList;
-            this.countCustomer = res.data.countCustomer;
-            this.total=res.data.pageBean.total;
-            this.pages=res.data.pageBean.pages;
-          })
-          .catch(err => {
-            console.error(err);
-          })
-      },
-      findAllSelect(){
-        this.axios({
-          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
-          method:'get',
-          url: 'http://localhost:9000/getAllCustomerSelect',
-          params:{
-            "pageNum":this.pageNum,
-            "pageSize":this.pageSize,
             startTime:new Date(this.timeSelect[0]).toLocaleDateString(),
             endTime:new Date(this.timeSelect[1]).toLocaleDateString(),
             "isuse":this.level,
@@ -345,6 +326,7 @@
         })
           .then(res => {
             console.log(res.data);
+            this.loading=false;
             this.tableData = res.data.customerList;
             this.countCustomer = res.data.countCustomer;
             this.total=res.data.pageBean.total;
@@ -359,9 +341,7 @@
         this.findAll();
       },
       check(){
-        console.log(new Date(this.timeSelect[0]).toLocaleDateString());
-        console.log(new Date(this.timeSelect[1]).toLocaleDateString());
-        this.findAllSelect();
+        this.findAll();
       },
     },
     mounted() {

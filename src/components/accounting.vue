@@ -38,6 +38,7 @@
       </el-divider>
     </div>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
       style="width: 100%">
@@ -89,7 +90,7 @@
         label="操作"
         width="150">
         <template slot-scope="scope">
-          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.name,scope.row.phonenumber,scope.row.customerId,scope.row.isdelete)">编辑信息</el-button>
+          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.password,scope.row.isdelete)">编辑信息</el-button>
         </template>
       </el-table-column>
 
@@ -105,28 +106,38 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="编辑顾客信息" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
-        <el-form-item label="顾客姓名" :label-width="formLabelWidth">
+    <el-dialog title="编辑会计信息" :visible.sync="dialogFormVisible">
+      <el-form :model="form" :rules="addRules" ref="updateForm">
+        <el-form-item label="会计姓名" prop="name" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"
-                    onkeyup="this.value=this.value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g, '');"
-                    maxlength="11"></el-input>
+                    ></el-input>
         </el-form-item>
-        <el-form-item label="顾客手机号码" :label-width="formLabelWidth">
+        <el-form-item label="会计手机号码" prop="phonenumber" :label-width="formLabelWidth">
           <el-input v-model="form.phonenumber" autocomplete="off"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'');"
-                    maxlength="11"></el-input>
+                    ></el-input>
         </el-form-item>
-        <el-form-item label="账号是否启用" :label-width="formLabelWidth">
+        <el-form-item label="会计微信" prop="wechat" :label-width="formLabelWidth">
+          <el-input v-model="form.wechat" autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="会计邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+          <el-input v-model="form.password" autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="账号是否启用"  :label-width="formLabelWidth">
           <el-switch
-            v-model="form.status"
+            v-model="form.isdelete"
             active-text="禁用"
             inactive-text="启用">
           </el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateYes">保 存</el-button>
+        <el-button type="primary" @click="updateValidate">保 存</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -179,6 +190,7 @@
     name: "accounting",
     data() {
       return {
+        loading:true,
         pickerOptions: {
           shortcuts: [{
             text: '最近一周',
@@ -255,12 +267,21 @@
           birth: [
             { required: true, message: '请选择出生日期', trigger: 'blur' }
           ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 18, message: '限制长度为6-18位,', trigger: 'blur' },
+            { pattern: /^[a-zA-Z]\w{5,17}$/, message: '以字母开头，只能包含字母、数字和下划线' }
+          ],
         },
         form: {
+          userinfoId:'',
           name: '',
           phonenumber:'',
-          customerId:'',
-          status:'',
+          email:'',
+          wechat:'',
+          gender:'',
+          isdelete:'',
+          password:''
         },
         formLabelWidth: '120px',
         pageNum:1,
@@ -274,42 +295,53 @@
         this.timeSelect=[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
         this.searchInput=''
       },
-      showUpdate(name,phonenumber,customerId,isdelete){
+      showUpdate(userinfoId,name,phonenumber,wechat,email,password,isdelete){
         this.dialogFormVisible=true;
+        this.form.userinfoId=userinfoId;
         this.form.name=name;
         this.form.phonenumber=phonenumber;
-        this.form.customerId=customerId;
-        this.form.status=isdelete;
+        this.form.wechat=wechat;
+        this.form.email=email;
+        this.form.password=password;
+        this.form.isdelete=isdelete;
       },
       updateYes(){
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'post',
-          url: 'http://localhost:9000/updateCustomer',
+          url: 'http://localhost:9000/updateAccounting',
           params:{
+            userinfoId:this.form.userinfoId,
             name:this.form.name,
             phonenumber:this.form.phonenumber,
-            customerId:this.form.customerId,
-            isdelete:this.form.status
+            email:this.form.email,
+            wechat:this.form.wechat,
+            password:this.form.password,
+            isdelete:this.form.isdelete
           }
         })
           .then(res => {
-            this.dialogFormVisible=false;
             this.$message({
-              message: '添加成功！',
+              message: '修改成功！',
               type: 'success'
             });
-            this.findAll()
+            this.dialogFormVisible=false;
+            this.findAllAccounting()
           })
           .catch(err => {
             console.error(err);
           })
-        this.add='';
       },
       addValidate() {
         this.$refs.addForm.validate((validate) => {
           if (!validate) return false
           this.addOne()
+        })
+      },
+      updateValidate(){
+        this.$refs.updateForm.validate((validate) => {
+          if (!validate) return false
+          this.updateYes()
         })
       },
       addOne(){
@@ -335,7 +367,15 @@
             });
             this.findAllAccounting();
             this.dialogAddVisible=false;
-            this.add='';
+            this.add= {
+              username:'',
+              name: '',
+              phonenumber:'',
+              email:'',
+              wechat:'',
+              gender:'',
+              birth:''
+            }
           })
           .catch(err => {
             console.error(err);
@@ -344,7 +384,15 @@
       },
       addQuit(){
         this.dialogAddVisible=false;
-        this.add='';
+        this.add= {
+          username:'',
+            name: '',
+            phonenumber:'',
+            email:'',
+            wechat:'',
+            gender:'',
+            birth:''
+        }
       },
       findAllAccounting(){
         this.axios({
@@ -361,6 +409,7 @@
         })
           .then(res => {
             console.log(res.data);
+            this.loading=false;
             this.tableData = res.data.accountingList;
             this.countAccounting = res.data.countAccounting;
             this.total=res.data.pageBean.total;
