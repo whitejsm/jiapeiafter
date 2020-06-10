@@ -1,86 +1,327 @@
 <template>
-    <div>
-      <el-row>
-        <el-col :span="8">
-          <el-input placeholder="请输入订单号" v-model="searchInput" size="200px">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
-        </el-col>
-      </el-row>
-      <br/>
-      <el-row>
-        <el-col :span="8">
-          <span>所属医院</span>
-          <el-select v-model="value" placeholder="--全部医院--">
-            <!--                                <el-option-->
-            <!--                                        v-for="item in options"-->
-            <!--                                        :key="item.value"-->
-            <!--                                        :label="item.label"-->
-            <!--                                        :value="item.value">-->
-            <!--                                </el-option>-->
-          </el-select>
-        </el-col>
-        <el-col :span="8">
-          <span>所属科室</span>
-          <el-select v-model="value" placeholder="--全部科室--">
-            <!--                                <el-option-->
-            <!--                                        v-for="item in options"-->
-            <!--                                        :key="item.value"-->
-            <!--                                        :label="item.label"-->
-            <!--                                        :value="item.value">-->
-            <!--                                </el-option>-->
-          </el-select>
-        </el-col>
-      </el-row>
-      <br/>
-      <el-row>
-        <el-col :span="8">
-          <span>订单状态</span>
-          <el-select v-model="value" placeholder="--订单状态--">
-            <!--                                <el-option-->
-            <!--                                        v-for="item in options"-->
-            <!--                                        :key="item.value"-->
-            <!--                                        :label="item.label"-->
-            <!--                                        :value="item.value">-->
-            <!--                                </el-option>-->
-          </el-select>
-        </el-col>
-      </el-row>
-      <br/>
-      <el-row>
-        <el-col :span="18">
-          <span>下单日期</span>
-          <el-date-picker
-            v-model="value1"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
-          <el-button type="small">确认</el-button>
-          <el-button type="small">清除</el-button>
-        </el-col>
-      </el-row>
-      <br/>
-      <el-table :data="tableData" border>
-        <el-table-column prop="date" label="日期" width="140">
-        </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
-        </el-table-column>
-        <el-table-column prop="address" label="地址">
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="1000">
-      </el-pagination>
-    </div>
+    <el-main>
+        <el-row>
+            <el-col :span="8">
+                <el-input placeholder="请输入订单号" v-model="ordersId" size="200px">
+                    <el-button slot="append" icon="el-icon-search"></el-button>
+                </el-input>
+            </el-col>
+        </el-row>
+        <br/>
+        <el-row>
+            <el-col :span="8">
+                <span>所属医院</span>
+                <el-select v-model="hospitalId" placeholder="--全部医院--"
+                           @change="changeHospital($event)">
+                    <el-option value="-1" label="全部医院"></el-option>
+                    <el-option
+                            v-for="item in hospitalList"
+                            :key="item.hospitalId"
+                            :label="item.hospitalname"
+                            :value="item.hospitalId">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="8">
+                <span>所属科室</span>
+                <el-select v-model="departmentId" placeholder="--全部科室--">
+                    <el-option value="-1" label="全部科室"></el-option>
+                    <el-option
+                            v-for="item in departmentList"
+                            :key="item.departmentId"
+                            :label="item.departmentname"
+                            :value="item.departmentId">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <br/>
+        <el-row>
+            <el-col :span="8">
+                <span>订单状态</span>
+                <el-select v-model="ordersStatus" placeholder="--订单状态--">
+                    <el-option value="所有状态"></el-option>
+                    <el-option value="已完成"></el-option>
+                    <el-option value="未支付"></el-option>
+                    <el-option value="已退回"></el-option>
+                    <!--                    <el-option-->
+                    <!--                            v-for="item in ordersStatus"-->
+                    <!--                            :key="item.value"-->
+                    <!--                            :label="item.label"-->
+                    <!--                            :value="item.value">-->
+                    <!--                    </el-option>-->
+                </el-select>
+            </el-col>
+        </el-row>
+        <br/>
+        <el-row>
+            <el-col :span="18">
+                <span>下单日期</span>
+                <el-date-picker
+                        v-model="dateRange"
+                        type="daterange"
+                        align="right"
+                        unlink-panels
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        :clearable="false">
+                    <!--                        :picker-options="pickerOptions">-->
+                    <!--                        value-format="yyyy-MM-dd">-->
+                    <!--                        format="yyyy/MM/dd">-->
+                </el-date-picker>
+                <el-button @click="getOrderList" type="small">确认</el-button>
+                <el-button @click="clearCondition" type="small">清除</el-button>
+            </el-col>
+        </el-row>
+        <br/>
+
+        <el-table :data="tableData" border>
+            <el-table-column prop="date" label="id" width="40">
+                <template slot-scope="scope">{{scope.$index + 1}}</template>
+            </el-table-column>
+            <el-table-column prop="ordersId" label="订单号" width="120"></el-table-column>
+            <el-table-column prop="bed.department.hospital.hospitalname" label="所属医院"></el-table-column>
+            <el-table-column prop="bed.department.departmentname" label="所属科室"></el-table-column>
+            <el-table-column prop="bedId" label="床位id"></el-table-column>
+            <el-table-column prop="totalpay" label="实际支付"></el-table-column>
+            <el-table-column prop="customer.phonenumber" label="手机号"></el-table-column>
+            <el-table-column prop="ordersStatus" label="订单状态"></el-table-column>
+            <el-table-column prop="createTime" label="下单时间" width="150">
+                <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
+            </el-table-column>
+            <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                    <el-button type="small info" @click="getDetail(scope.row)">详情</el-button>
+                    <el-button type="small danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                style="text-align: center"
+                background
+                layout="prev, pager, next"
+                :total="total"
+                :page-size="pageSize"
+                @current-change="changePage">
+        </el-pagination>
+
+        <el-dialog  :visible.sync="dialogTableVisible" width="70%">
+            <el-row>
+                <el-col :span="24"
+                        style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+                               height: 220px">
+                    <el-row style="margin: 30px">
+                        <span style="font-size: larger">订单信息</span>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">订单号:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersId}}</el-col>
+                        <el-col :span="3" :offset="1">订单状态:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersStatus}}</el-col>
+                        <el-col :span="3" :offset="1">租用时长:</el-col>
+                        <el-col :span="4">{{timeLength}}</el-col>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">下单时间:</el-col>
+                        <el-col :span="4">{{currentOrder.createTime | dateFormat}}</el-col>
+                        <el-col :span="3" :offset="1">归还时间:</el-col>
+                        <el-col :span="4">{{currentOrder.endTime | dateFormat}}</el-col>
+                        <el-col :span="3" :offset="1">是否异常:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersStatus != null ? '是' : '否'}}</el-col>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">异常类型:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersStatus}}</el-col>
+                        <el-col :span="3" :offset="1">退还租金:</el-col>
+                        <el-col :span="4">已退回</el-col>
+                    </el-row>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24"
+                        style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+                                height: 450px; margin-top: 30px">
+                    <el-row style="margin: 30px">
+                        <span style="font-size: larger">床位信息</span>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">所属医院:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersId}}</el-col>
+                        <el-col :span="3" :offset="1">所属科室:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersStatus}}</el-col>
+                        <el-col :span="3" :offset="1">床位编号:</el-col>
+                        <el-col :span="4">{{currentBed.number}}</el-col>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">设备ID:</el-col>
+                        <el-col :span="4">{{currentOrder.bedId}}</el-col>
+                        <el-col :span="3" :offset="1">租金金额:</el-col>
+                        <el-col :span="4">{{currentOrder.rent}}</el-col>
+                    </el-row>
+                    <el-divider></el-divider>
+                    <el-row style="margin: 30px">
+                        <span style="font-size: larger">用户信息</span>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">手机号:</el-col>
+                        <el-col :span="4">{{currentCustomer.phonenumber}}</el-col>
+                        <el-col :span="3" :offset="1">微信昵称:</el-col>
+                        <el-col :span="4">{{currentCustomer.wechat}}</el-col>
+                    </el-row>
+                    <el-divider></el-divider>
+                    <el-row style="margin: 30px">
+                        <span style="font-size: larger">支付信息</span>
+                    </el-row>
+                    <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">实际支付:</el-col>
+                        <el-col :span="4">{{currentOrder.totalpay}}</el-col>
+                        <el-col :span="3" :offset="1">支付状态:</el-col>
+                        <el-col :span="4">{{currentOrder.ordersStatus}}</el-col>
+                        <el-col :span="3" :offset="1">支付时间:</el-col>
+                        <el-col :span="4">{{currentOrder.payTime | dateFormat}}</el-col>
+                    </el-row>
+                </el-col>
+            </el-row>
+            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
+            <!--                        width: 80%; height: 300px; text-align: center">-->
+            <!--                1-->
+            <!--            </el-main>-->
+            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
+            <!--                        width: 80%; height: 300px; margin-top: 50px; text-align: center">-->
+            <!--2-->
+            <!--            </el-main>-->
+        </el-dialog>
+    </el-main>
 </template>
 
 <script>
     export default {
-        name: "order"
+        name: "Order.vue",
+        data() {
+            return {
+                tableData: null,
+                hospitalList: null,
+                departmentList: null,
+                ordersId: null,
+                hospitalId: '-1',
+                departmentId: '-1',
+                ordersStatus: '所有状态',
+                dateRange: [new Date(0), new Date()],
+                total: 1,
+                pageSize: 1,
+                pageNum: 1,
+                dialogTableVisible: false,
+                currentOrder: '',
+                currentBed: '',
+                currentCustomer: '',
+                timeLength: '',
+            }
+        },
+        mounted() {
+            this.axios.get(
+                "http://localhost:9000/getAllHospital"
+            ).then(res => {
+                if(res.data.result == 'ok') {
+                    this.hospitalList = res.data.hospitalList;
+                }
+                //this.changeHospital(0);
+            }).catch(err => {
+                console.error(err);
+            })
+            this.getOrderList();
+        },
+        methods: {
+            changeHospital(hIndex) {
+                if(hIndex > 0) {
+                    this.departmentList = this.hospitalList[hIndex-1].departmentList;
+                } else {
+                    this.departmentList = '';
+                }
+                this.departmentId = '-1';
+            },
+            clearCondition() {
+                this.ordersId = '';
+                this.hospitalId = '-1';
+                this.departmentId = '-1';
+                this.ordersStatus = '所有状态';
+                this.dateRange = [new Date(0), new Date()];
+            },
+            getOrderList() {
+                this.axios({
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    method: 'get',
+                    url: 'http://localhost:9000/getOrdersByCondition',
+                    params: {
+                        ordersId: this.ordersId,
+                        hospitalId: this.hospitalId,
+                        departmentId: this.departmentId,
+                        ordersStatus: this.ordersStatus,
+                        createTime: new Date(this.dateRange[0]).toLocaleDateString(),
+                        endTime: new Date(this.dateRange[1]).toLocaleDateString(),
+
+                        pageSize: this.pageSize,
+                        pageNum: this.pageNum,
+                    }
+                }).then(res => {
+                    if (res.data.result == 'ok') {
+                        this.tableData = res.data.ordersList;
+                        console.log(res.data);
+                        this.total = res.data.pageBean.total;
+                        this.pageSize = res.data.pageBean.pageSize;
+                        this.pageNum = res.data.pageBean.pageNum;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
+            },
+            getDetail(row) {
+                this.dialogTableVisible = true;
+                this.currentOrder = row;
+                this.currentBed = row.bed;
+                this.currentCustomer = row.customer;
+
+                if(this.currentOrder.endTime != null) {
+                    var date2 = new Date(this.currentOrder.endTime);
+                    var date1 = new Date(this.currentOrder.createTime);
+                    var date3 = date2.getTime() - new Date(date1).getTime();   //时间差的毫秒数
+                    //计算出相差天数
+                    var days=Math.floor(date3/(24*3600*1000))
+
+                    //计算出小时数
+                    var leave1=date3%(24*3600*1000)    //计算天数后剩余的毫秒数
+                    var hours=Math.floor(leave1/(3600*1000))
+                    //计算相差分钟数
+                    var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数
+                    var minutes=Math.floor(leave2/(60*1000))
+                    //计算相差秒数
+                    var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
+                    var seconds=Math.round(leave3/1000)
+
+                    this.timeLength = days+"天"+hours+"小时 "+minutes+"分钟"+seconds+"秒";
+                } else {
+                    this.timeLength = null;
+                }
+
+            },
+            changePage(pageNum) {
+                this.pageNum = pageNum;
+                this.getOrderList();
+            }
+        },
+        filters: {
+            dateFormat(dataStr) {
+                var dt = new Date(dataStr);
+                // yyyy-mm-dd
+                var y = dt.getFullYear();
+                var m = dt.getMonth() + 1;
+                var d = dt.getDate();
+                var hh = dt.getHours();
+                var mm = dt.getMinutes();
+                var ss = dt.getSeconds();
+                return y + "-" + m + "-" + d + "  " + hh + ":" + mm + ":" + ss
+            }
+        }
     }
 </script>
 
