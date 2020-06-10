@@ -16,7 +16,7 @@
         </el-dropdown>
       </el-header>
       <el-container>
-        <el-aside  style="width: 255px;background-color: rgb(238, 241, 246)">
+        <el-aside  style="width: 255px;background-color: #545c64">
           <el-menu :default-active="this.$route.path"
                    router
                    class="el-menu-vertical-demo"
@@ -31,9 +31,9 @@
                 </template>
                 <el-menu-item style="width: 250px" v-for="childTwo in childOne.children"
                                     :key="childTwo.id" :index="childTwo.url">
-                  <el-menu-item>
+<!--                  <el-menu-item>-->
                     <i class="el-icon-message"></i>{{childTwo.permissionname}}
-                  </el-menu-item>
+<!--                  </el-menu-item>-->
                 </el-menu-item>
               </el-submenu>
             </div>
