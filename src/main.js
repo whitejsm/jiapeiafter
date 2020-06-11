@@ -16,7 +16,7 @@ axios.defaults.withCredentials=true;
 Vue.use(ElementUI)
 Vue.use(vueaxios, axios)
 
-axios.defaults.baseURL= 'http://localhost:9000'
+
 Vue.config.productionTip = false
 
 // Vue.filter('dateFormat',function(value){
