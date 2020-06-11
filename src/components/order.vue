@@ -77,7 +77,7 @@
         <br/>
 
         <el-row>
-            <el-button size="small">导出</el-button>
+            <el-button size="small" @click="getFile">导出</el-button>
         </el-row>
         <br />
         <el-row style="background-color: #e3f5ff; border-radius: 0px; padding: 15px 10px">
@@ -248,7 +248,6 @@
                 this.dateRange = [new Date(0), new Date()];
             },
             getOrderList() {
-                console.log(this.a(this.dateRange[1]));
                 this.axios({
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     method: 'get',
@@ -321,6 +320,17 @@
                 var mm = dt.getMinutes();
                 var ss = dt.getSeconds();
                 return y + "/" + m + "/" + d + "  " + hh + ":" + mm + ":" + ss
+            },
+            getFile() {
+                let param = "?";
+                param += "ordersId=" + (this.ordersId == null ? '' : this.ordersId);
+                param += "&departmentId=" + this.departmentId;
+                param += "&hospitalId=" + this.hospitalId;
+                param += "&ordersStatus=" + this.ordersStatus;
+                param += "&createTime=" + this.dateFormatWithDiagonal(this.dateRange[0]);
+                param += "&endTime=" + this.dateFormatWithDiagonal(this.dateRange[1]);
+                console.log(param);
+                location.href="http://localhost:9000/downloadOrdersFile" + param;
             }
         },
         filters: {
