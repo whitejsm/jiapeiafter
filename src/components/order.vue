@@ -113,6 +113,28 @@
                 :page-size="pageSize"
                 @current-change="changePage">
         </el-pagination>
+        <el-upload
+                class="upload-demo"
+                action="http://localhost:9000/uploadOrderFile/"
+                accept="xlsx"
+                :on-success="uploadSuccess"
+                :on-error="uploadFailed">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>
+        </el-upload>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <el-dialog  :visible.sync="dialogTableVisible" width="70%">
             <el-row>
@@ -331,6 +353,12 @@
                 param += "&endTime=" + this.dateFormatWithDiagonal(this.dateRange[1]);
                 console.log(param);
                 location.href="http://localhost:9000/downloadOrdersFile" + param;
+            },
+            uploadSuccess(response, file, fileList) {
+                console.log("success");
+            },
+            uploadFailed(err, file, fileList) {
+                console.log("error");
             }
         },
         filters: {
