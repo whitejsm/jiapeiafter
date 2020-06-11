@@ -392,7 +392,7 @@ export default {
         findByExample(){
             this.axios({
                 method:'get',
-                url: "/bed/findByExample",
+                url: "http://localhost:9000/bed/findByExample",
                 params: {
                     bedId:this.bedId,
                     hospitalId:this.hospitalId,
@@ -425,7 +425,7 @@ export default {
         details(bedId){
             this.axios({
                 method:'get',
-                url: "/bed/findOne",
+                url: "http://localhost:9000/bed/findOne",
                 params: {
                     "bedId":bedId
                 }
@@ -450,7 +450,7 @@ export default {
             });
             this.axios({
                 method:'get',
-                url: "/bed/disable",
+                url: "http://localhost:9000/bed/disable",
                 params: {
                     "bedId":bedId
                 }
@@ -478,7 +478,7 @@ export default {
                 console.log(this.selectedIDs[i])
             }
             console.log(this.selectedIDs);
-            this.axios.post("/bed/showCheckedBedId",this.selectedIDs)
+            this.axios.post("http://localhost:9000/bed/showCheckedBedId",this.selectedIDs)
             .then(res => {
                 console.log(res.data.result+"  "+res.data.msg),
                 this.selectedIDs=[];
@@ -502,7 +502,7 @@ export default {
         getDepartment(){
             this.axios({
                   method:'get',
-                  url: "/bed/findDepartment",
+                  url: "http://localhost:9000/bed/findDepartment",
                   params: {
                       "hospitalId":this.hospitalId
                   }
@@ -519,7 +519,7 @@ export default {
         getDepartmentDialog(){
             this.axios({
                   method:'get',
-                  url: "/bed/findDepartment",
+                  url: "http://localhost:9000/bed/findDepartment",
                   params: {
                       "hospitalId":this.bed.hospitalId
                   }
@@ -547,7 +547,7 @@ export default {
                 this.bedInfoAdd = false;
                 this.axios({
                   method:'post',
-                  url: '/bed/save',
+                  url: 'http://localhost:9000/bed/save',
                   params: {
                       bedId:this.bed.bedId,
                       manufacturerId:this.manufacturer.manufacturerId,
@@ -570,7 +570,7 @@ export default {
           if(this.flag){
               this.axios({
                   method:'post',
-                  url: '/bed/update',
+                  url: 'http://localhost:9000/bed/update',
                   params: {
                       bedId:this.bed.bedId,
                       departmentId:this.bed.departmentId,
@@ -620,7 +620,7 @@ export default {
         update(bedId){
             this.axios({
                 method:'get',
-                url: "/bed/findOne",
+                url: "http://localhost:9000/bed/findOne",
                 params: {
                     "bedId":bedId
                 }

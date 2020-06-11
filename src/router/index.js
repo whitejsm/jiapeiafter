@@ -2,10 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/components/Main'
 import Login from '@/components/Login'
-import ht from '@/components/ht'
 import order from '@/components/order'
-import FindALL from '@/components/customer/FindAll'
-import bedInfo from '@/components/bed/bedInfo'
+import customer from '@/components/customer'
+import shareholder from '@/components/shareholder'
+import hospital from '@/components/hospital'
+import repair from '@/components/repair'
+import accounting from '@/components/accounting'
+
 Vue.use(Router);
 
 const originalPush = Router.prototype.push
@@ -15,13 +18,15 @@ Router.prototype.push = function push(location) {
 
 export default new Router({
     routes: [
-      {path: '/', name: 'login', component: Login},
+      {path: '/', name: ' ', component: Login},
       {path: '/Main', name: 'main', component: Main,
         children:[
-          {component:ht,path:"/ht"},
-          {component:order,path:"/order1111"},
-          {component:FindALL,path:"/customer/FindALL"},
-          {component:bedInfo,path:"/bed/bedInfo"}
+          {component:order,path:"/order"},
+          {component:customer,path:"/customer"},
+          {component:shareholder,path:"/shareholder"},
+          {component:hospital,path:"/hospital"},
+          {component:repair,path:"/repair"},
+          {component:accounting,path:"/accounting"}
         ]}
     ]
 })
