@@ -76,6 +76,14 @@
         </el-row>
         <br/>
 
+        <el-row>
+            <el-button size="small">导出</el-button>
+        </el-row>
+        <br />
+        <el-row style="background-color: #e3f5ff; border-radius: 0px; padding: 15px 10px">
+            <i class="el-icon-user-solid"></i>&nbsp;&nbsp;总订单数: {{total}}
+        </el-row>
+
         <el-table :data="tableData" border>
             <el-table-column prop="date" label="id" width="40">
                 <template slot-scope="scope">{{scope.$index + 1}}</template>

@@ -8,7 +8,7 @@ import shareholder from '@/components/shareholder'
 import hospital from '@/components/hospital'
 import repair from '@/components/repair'
 import accounting from '@/components/accounting'
-
+import bedInfo from '@/components/bed/bedInfo'
 Vue.use(Router);
 
 const originalPush = Router.prototype.push
@@ -26,7 +26,9 @@ export default new Router({
           {component:shareholder,path:"/shareholder"},
           {component:hospital,path:"/hospital"},
           {component:repair,path:"/repair"},
-          {component:accounting,path:"/accounting"}
+          {component:accounting,path:"/accounting"},
+          {component:bedInfo,path:"/bed/bedInfo"}
+
         ]}
     ]
 })
