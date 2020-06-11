@@ -50,18 +50,20 @@
       <el-table-column
         prop="name"
         label="维修人员姓名"
+        width="100"
       >
       </el-table-column>
       <el-table-column
         prop="gender"
         label="性别"
+        width="50"
       >
         <template slot-scope="scope">{{ scope.row.gender | genderFormat }}</template>
       </el-table-column>
       <el-table-column
         prop="phonenumber"
         label="手机号码"
-        width="150">
+        width="100">
       </el-table-column>
       <el-table-column
         prop="wechat"
@@ -71,26 +73,29 @@
       <el-table-column
         prop="email"
         label="电子邮箱"
-        width="200">
+        width="150">
       </el-table-column>
       <el-table-column
         prop="birth"
         label="出生日期"
+        width="120"
       >
         <template slot-scope="scope">{{ scope.row.birth | dateFormat2 }}</template>
       </el-table-column>
       <el-table-column
         prop="createTime"
         label="加入时间"
-        width="200">
+        width="150">
         <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
       </el-table-column>
       <el-table-column
         prop=""
         label="操作"
-        width="150">
+        >
         <template slot-scope="scope">
-          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.password,scope.row.isdelete)">编辑信息</el-button>
+          <el-button type="primary" icon="el-icon-s-promotion"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.password,scope.row.isdelete)">编辑信息</el-button>
+          <el-button type="success" icon="el-icon-s-cooperation"  size="small" plain @click="showHospital(scope.row.userinfoId)">负责医院</el-button>
+          <el-button type="warning" icon="el-icon-s-cooperation"  size="small" plain @click="showRepair(scope.row.userinfoId)">维修记录</el-button>
         </template>
       </el-table-column>
 
@@ -181,7 +186,86 @@
         <el-button @click="addQuit">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="负责医院和科室" :visible.sync="dialogTableVisible">
+      <div>
+        <el-divider content-position="left"><i class="el-icon-document-checked"></i>   负责医院总数:{{countHospital}}</el-divider>
+      </div>
+      <el-table :data="hospitalData">
+        <el-table-column property="hospitalname" label="医院名称" >
+        </el-table-column>
+        <el-table-column property="departmentname" label="科室名称"  >
+        </el-table-column>
+        <el-table-column
+          prop=""
+          label="操作"
+        >
+          <template slot-scope="scope">
+            <el-popconfirm
+              title="确定删除吗？"
+              icon="el-icon-info"
+              iconColor="red"
+              @onConfirm="deleteDept(scope.row.departmentId)">
+            <el-button type="danger" slot="reference" icon="el-icon-delete"  size="small" plain 	>删除</el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-form   >
+          <el-form-item label="医院"  >
+        <el-select v-model="dept.hospitalId" placeholder="请选择医院" @change="changeDepartment($event)">
+          <el-option
+            v-for="item in allHospitalData"
+            :key="item.hospitalId"
+            :label="item.hospitalname"
+            :value="item.hospitalId">
+          </el-option>
+        </el-select>
+          </el-form-item>
+            <el-form-item label="科室"  >
+        <el-select
+          v-model="dept.departmentId"
+          multiple
+          placeholder="请选择科室">
+          <el-option
+            v-for="item in allDepartmentData"
+            :key="item.departmentId"
+            :label="item.departmentname"
+            :value="item.departmentId">
+          </el-option>
+        </el-select>
+          </el-form-item>
+        </el-form>
+        <el-button type="primary" @click="addDepartment">添 加</el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTableVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
 
+    <el-dialog title="维修记录" :visible.sync="dialogRepairVisible">
+      <div>
+        <el-divider content-position="left"><i class="el-icon-document-checked"></i>   维修记录总数:{{countRepair}}</el-divider>
+      </div>
+      <el-table :data="allRepairData">
+        <el-table-column property="bedId" label="医院名称" >
+        </el-table-column>
+        <el-table-column property="bedId" label="科室名称" >
+        </el-table-column>
+        <el-table-column property="bedId" label="床位编号"  >
+        </el-table-column>
+        <el-table-column property="faultTitle" label="故障原因"  >
+        </el-table-column>
+        <el-table-column property="faultStatus" label="维修状态"  >
+        </el-table-column>
+        <el-table-column property="createTime" label="维修时间"  >
+          <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogRepairVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -222,8 +306,21 @@
         searchInput:null,
         tableData: '',
         countRepairman:'',
+        hospitalData:'',
+        allHospitalData:'',
+        allDepartmentData:'',
+        allRepairData:'',
+        departmentId:'',
+        dept:{
+          hospitalId:'',
+          departmentId:[],
+        },
+        countHospital:'',
+        countRepair:'',
         dialogFormVisible: false,
         dialogAddVisible: false,
+        dialogTableVisible: false,
+        dialogRepairVisible: false,
         add: {
           username:'',
           name: '',
@@ -267,6 +364,12 @@
           birth: [
             { required: true, message: '请选择出生日期', trigger: 'blur' }
           ],
+          hospital: [
+            { required: true, message: '请选择医院', trigger: 'blur' }
+          ],
+          department: [
+            { required: true, message: '请选择科室，可选多个', trigger: 'blur' }
+          ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
             { min: 6, max: 18, message: '限制长度为6-18位,', trigger: 'blur' },
@@ -291,6 +394,137 @@
       }
     },
     methods:{
+      addDepartment(){
+        console.log("进入提交添加医院");
+        console.log(this.dept.hospitalId);
+        var arr2 = [];
+        for(var i=0;i<this.dept.departmentId.length;i++){
+          arr2.push(this.dept.departmentId[i]);
+        }
+        console.log(arr2);
+        let a=JSON.stringify(arr2);
+
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'get',
+          url: 'http://localhost:9000/repairAddDepartment',
+          params:{
+            hospitalId:this.dept.hospitalId,
+            departmentId:qs.stringify(this.dept),
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '添加负责医院科室成功！',
+              type: 'success'
+            });
+            this.dept='';
+            this.dialogTableVisible=false;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      changeDepartment(event){
+        const id=this.allHospitalData[event-1].hospitalId;
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'post',
+          url: 'http://localhost:9000/getDepartments',
+          params:{
+            hospitalId:id,
+          }
+        })
+          .then(res => {
+            console.log(res.data);
+            this.allDepartmentData=res.data.allDepartment;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      selectAll(){
+        let nodesObj = this.$refs['cas'].getCheckedNodes();
+        console.log(nodesObj);
+      },
+      deleteDept(departmentId){
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'post',
+          url: 'http://localhost:9000/deleteDept',
+          params:{
+            departmentId:departmentId,
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '删除成功！',
+              type: 'success'
+            });
+            this.dialogTableVisible=false;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      showRepair(userinfoId){
+         this.dialogRepairVisible=true;
+         this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'get',
+          url: 'http://localhost:9000/getRepair',
+           params:{
+             userinfoId:userinfoId,
+           }
+        })
+          .then(res => {
+            this.$message({
+              message: '数据获取成功！',
+              type: 'success'
+            });
+            this.allRepairData=res.data.allRepair;
+            this.countRepair=res.data.countRepair;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      getHospitals(){
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'get',
+          url: 'http://localhost:9000/getHospitals',
+        })
+          .then(res => {
+            this.allHospitalData=res.data.allHospital;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      showHospital(userinfoId){
+        this.getHospitals();
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'get',
+          url: 'http://localhost:9000/showHospital',
+          params:{
+            userinfoId:userinfoId,
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '数据获取成功！',
+              type: 'success'
+            });
+            this.dialogTableVisible=true;
+            this.countHospital=res.data.countHospital;
+            this.hospitalData=res.data.hospitalList;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
       clearAll(){
         this.timeSelect=[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
         this.searchInput=''
@@ -331,6 +565,12 @@
           .catch(err => {
             console.error(err);
           })
+      },
+      addDeptValidate() {
+        this.$refs.deptForm.validate((validate) => {
+          if (!validate) return false
+          this.addDepartment()
+        })
       },
       addValidate() {
         this.$refs.addForm.validate((validate) => {
@@ -458,5 +698,5 @@
   }
 </script>
 <style scoped>
-
+  .el-cascader-panel{height:100px;}
 </style>
