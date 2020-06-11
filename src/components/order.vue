@@ -191,14 +191,6 @@
                     </el-row>
                 </el-col>
             </el-row>
-            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
-            <!--                        width: 80%; height: 300px; text-align: center">-->
-            <!--                1-->
-            <!--            </el-main>-->
-            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
-            <!--                        width: 80%; height: 300px; margin-top: 50px; text-align: center">-->
-            <!--2-->
-            <!--            </el-main>-->
         </el-dialog>
     </el-main>
 </template>
@@ -256,6 +248,7 @@
                 this.dateRange = [new Date(0), new Date()];
             },
             getOrderList() {
+                console.log(this.a(this.dateRange[1]));
                 this.axios({
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     method: 'get',
@@ -265,8 +258,10 @@
                         hospitalId: this.hospitalId,
                         departmentId: this.departmentId,
                         ordersStatus: this.ordersStatus,
-                        createTime: new Date(this.dateRange[0]).toLocaleDateString(),
-                        endTime: new Date(this.dateRange[1]).toLocaleDateString(),
+                        //createTime: new Date(this.dateRange[0]).toLocaleDateString(),
+                        //endTime: new Date(this.dateRange[1]).toLocaleDateString(),
+                        createTime: this.dateFormatWithDiagonal(this.dateRange[0]),
+                        endTime: this.dateFormatWithDiagonal(this.dateRange[1]),
 
                         pageSize: this.pageSize,
                         pageNum: this.pageNum,
@@ -315,12 +310,23 @@
             changePage(pageNum) {
                 this.pageNum = pageNum;
                 this.getOrderList();
+            },
+            dateFormatWithDiagonal(dataStr) {
+                var dt = new Date(dataStr);
+                // yyyy-mm-dd
+                var y = dt.getFullYear();
+                var m = dt.getMonth() + 1;
+                var d = dt.getDate();
+                var hh = dt.getHours();
+                var mm = dt.getMinutes();
+                var ss = dt.getSeconds();
+                return y + "/" + m + "/" + d + "  " + hh + ":" + mm + ":" + ss
             }
         },
         filters: {
             dateFormat(dataStr) {
                 var dt = new Date(dataStr);
-                // yyyy-mm-dd
+                // yyyy/mm/dd
                 var y = dt.getFullYear();
                 var m = dt.getMonth() + 1;
                 var d = dt.getDate();

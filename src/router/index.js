@@ -8,6 +8,9 @@ import shareholder from '@/components/shareholder'
 import hospital from '@/components/hospital'
 import repair from '@/components/repair'
 import accounting from '@/components/accounting'
+import simpleReport from '@/components/SimpleReport'
+import visibleReport from '@/components/VisibleReport'
+import saleReport from '@/components/SaleReport'
 
 Vue.use(Router);
 
@@ -26,7 +29,10 @@ export default new Router({
           {component:shareholder,path:"/shareholder"},
           {component:hospital,path:"/hospital"},
           {component:repair,path:"/repair"},
-          {component:accounting,path:"/accounting"}
+          {component:accounting,path:"/accounting"},
+          {component:simpleReport,path:"/simpleReport"},
+          {component:visibleReport,path:"/visibleReport"},
+          {component:saleReport,path:"/saleReport"},
         ]}
     ]
 })
