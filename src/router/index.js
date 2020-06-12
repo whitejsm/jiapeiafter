@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/components/Main'
-import Login from '@/components/Login'
-import order from '@/components/order'
-import customer from '@/components/customer'
-import shareholder from '@/components/shareholder'
-import hospital from '@/components/hospital'
-import repair from '@/components/repair'
-import accounting from '@/components/accounting'
-import bedInfo from '@/components/bed/bedInfo'
+import Main from '@/components/Main'                //主界面
+import Login from '@/components/Login'              //登录
+import order from '@/components/order'              //订单
+import customer from '@/components/customer'        //前台用户
+import shareholder from '@/components/shareholder'  //股东/经销商
+import hospital from '@/components/hospital'        //医院
+import repair from '@/components/repair'            //维修人员
+import accounting from '@/components/accounting'    //会计
+import bedInfo from '@/components/bed/bedInfo'      //床位信息  
+import faults from '@/components/aftersale/faults'    //故障
 Vue.use(Router);
 
 const originalPush = Router.prototype.push
@@ -27,8 +28,8 @@ export default new Router({
           {component:hospital,path:"/hospital"},
           {component:repair,path:"/repair"},
           {component:accounting,path:"/accounting"},
-          {component:bedInfo,path:"/bed/bedInfo"}
-
+          {component:bedInfo,path:"/bed/bedInfo"},
+          {component:faults,path:"/aftersale/faults"}
         ]}
     ]
 })

@@ -12,7 +12,7 @@ import axios from 'axios'
 import store from '@/store.js'
 
 axios.defaults.withCredentials=true;
-
+// Vueaxios.defaults.baseURL="http://localhost:9000"
 Vue.use(ElementUI)
 Vue.use(vueaxios, axios)
 

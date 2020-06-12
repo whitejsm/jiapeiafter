@@ -23,7 +23,7 @@
                    background-color="#545c64"
                    text-color="#fff"
                    active-text-color="#fff" >
-            <div v-for="permission in permissionList" index="">
+            <div v-for="(permission,i) in permissionList" index="" :key="i">
               <el-submenu v-for="(childOne, childOneIndex) in permission.children" :key="childOneIndex"
                           :index="childOneIndex + ''">
                 <template slot="title"><i class="el-icon-message"></i>
