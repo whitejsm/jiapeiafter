@@ -74,6 +74,8 @@
                         if (res.data.status=='success'){
                           this.$store.state.id=res.data.userId;
                           this.$store.state.userName=res.data.userName;
+                          this.$store.state.roleId = res.data.roleId;
+                          this.$store.state.roleName = res.data.roleName;
                           this.$message({
                             message: '恭喜你登录成功！',
                             type: 'success'

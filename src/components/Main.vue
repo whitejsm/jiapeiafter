@@ -7,7 +7,8 @@
         </div>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
-            {{this.$store.state.userName}}<i class="el-icon-arrow-down el-icon--right"></i>
+            {{this.$store.state.userName}} （{{this.$store.state.roleName}}）
+              <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="a">个人信息</el-dropdown-item>
@@ -23,7 +24,7 @@
                    background-color="#545c64"
                    text-color="#fff"
                    active-text-color="#fff" >
-            <div v-for="permission in permissionList" index="">
+            <div v-for="(permission,i) in permissionList" index="" :key="i">
               <el-submenu v-for="(childOne, childOneIndex) in permission.children" :key="childOneIndex"
                           :index="childOneIndex + ''">
                 <template slot="title"><i class="el-icon-message"></i>
