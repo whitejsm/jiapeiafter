@@ -10,6 +10,9 @@ import repair from '@/components/repair'            //维修人员
 import accounting from '@/components/accounting'    //会计
 import bedInfo from '@/components/bed/bedInfo'      //床位信息  
 import faults from '@/components/aftersale/faults'    //故障
+import simpleReport from '@/components/SimpleReport'
+import visibleReport from '@/components/VisibleReport'
+import saleReport from '@/components/SaleReport'
 Vue.use(Router);
 
 const originalPush = Router.prototype.push
@@ -29,7 +32,10 @@ export default new Router({
           {component:repair,path:"/repair"},
           {component:accounting,path:"/accounting"},
           {component:bedInfo,path:"/bed/bedInfo"},
-          {component:faults,path:"/aftersale/faults"}
+          {component:faults,path:"/aftersale/faults"},
+          {component:simpleReport,path:"/simpleReport"},
+          {component:visibleReport,path:"/visibleReport"},
+          {component:saleReport,path:"/saleReport"},
         ]}
     ]
 })

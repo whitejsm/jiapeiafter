@@ -7,7 +7,8 @@
         </div>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
-            {{this.$store.state.userName}}<i class="el-icon-arrow-down el-icon--right"></i>
+            {{this.$store.state.userName}} （{{this.$store.state.roleName}}）
+              <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="a">个人信息</el-dropdown-item>

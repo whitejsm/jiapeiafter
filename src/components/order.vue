@@ -77,7 +77,7 @@
         <br/>
 
         <el-row>
-            <el-button size="small">导出</el-button>
+            <el-button size="small" @click="getFile">导出</el-button>
         </el-row>
         <br />
         <el-row style="background-color: #e3f5ff; border-radius: 0px; padding: 15px 10px">
@@ -113,6 +113,28 @@
                 :page-size="pageSize"
                 @current-change="changePage">
         </el-pagination>
+        <el-upload
+                class="upload-demo"
+                action="http://localhost:9000/uploadOrderFile/"
+                accept="xlsx"
+                :on-success="uploadSuccess"
+                :on-error="uploadFailed">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>
+        </el-upload>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <el-dialog  :visible.sync="dialogTableVisible" width="70%">
             <el-row>
@@ -191,14 +213,6 @@
                     </el-row>
                 </el-col>
             </el-row>
-            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
-            <!--                        width: 80%; height: 300px; text-align: center">-->
-            <!--                1-->
-            <!--            </el-main>-->
-            <!--            <el-main style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);-->
-            <!--                        width: 80%; height: 300px; margin-top: 50px; text-align: center">-->
-            <!--2-->
-            <!--            </el-main>-->
         </el-dialog>
     </el-main>
 </template>
@@ -265,8 +279,10 @@
                         hospitalId: this.hospitalId,
                         departmentId: this.departmentId,
                         ordersStatus: this.ordersStatus,
-                        createTime: new Date(this.dateRange[0]).toLocaleDateString(),
-                        endTime: new Date(this.dateRange[1]).toLocaleDateString(),
+                        //createTime: new Date(this.dateRange[0]).toLocaleDateString(),
+                        //endTime: new Date(this.dateRange[1]).toLocaleDateString(),
+                        createTime: this.dateFormatWithDiagonal(this.dateRange[0]),
+                        endTime: this.dateFormatWithDiagonal(this.dateRange[1]),
 
                         pageSize: this.pageSize,
                         pageNum: this.pageNum,
@@ -315,12 +331,40 @@
             changePage(pageNum) {
                 this.pageNum = pageNum;
                 this.getOrderList();
+            },
+            dateFormatWithDiagonal(dataStr) {
+                var dt = new Date(dataStr);
+                // yyyy-mm-dd
+                var y = dt.getFullYear();
+                var m = dt.getMonth() + 1;
+                var d = dt.getDate();
+                var hh = dt.getHours();
+                var mm = dt.getMinutes();
+                var ss = dt.getSeconds();
+                return y + "/" + m + "/" + d + "  " + hh + ":" + mm + ":" + ss
+            },
+            getFile() {
+                let param = "?";
+                param += "ordersId=" + (this.ordersId == null ? '' : this.ordersId);
+                param += "&departmentId=" + this.departmentId;
+                param += "&hospitalId=" + this.hospitalId;
+                param += "&ordersStatus=" + this.ordersStatus;
+                param += "&createTime=" + this.dateFormatWithDiagonal(this.dateRange[0]);
+                param += "&endTime=" + this.dateFormatWithDiagonal(this.dateRange[1]);
+                console.log(param);
+                location.href="http://localhost:9000/downloadOrdersFile" + param;
+            },
+            uploadSuccess(response, file, fileList) {
+                console.log("success");
+            },
+            uploadFailed(err, file, fileList) {
+                console.log("error");
             }
         },
         filters: {
             dateFormat(dataStr) {
                 var dt = new Date(dataStr);
-                // yyyy-mm-dd
+                // yyyy/mm/dd
                 var y = dt.getFullYear();
                 var m = dt.getMonth() + 1;
                 var d = dt.getDate();
