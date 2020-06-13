@@ -1,5 +1,10 @@
 <template>
 <div>
+  <el-breadcrumb separator-class="el-icon-arrow-right">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item :to="{ path: '/bed/bedInfo' }">床位管理</el-breadcrumb-item>
+    <el-breadcrumb-item>床位信息</el-breadcrumb-item>
+  </el-breadcrumb>
   <!--搜索组件-->
 <el-row>
       <el-col :span="8">
@@ -87,7 +92,7 @@
 
     <el-button type="danger"  @click="delChecked()">删除选中</el-button>
     <el-button type="primary" @click="delChecked()">导入床位</el-button>
-    <el-button type="primary" @click="delChecked()">导出床位</el-button>
+    <el-button type="primary" @click="exportBed()">导出床位</el-button>
     <el-button type="primary" @click="add()">添加信息</el-button>
     共{{total}}条记录<hr>
     <el-table
@@ -182,7 +187,7 @@
         label="操作"
         width="180">
         <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" circle @click="update(scope.row.bedId)"></el-button>
+            <el-button type="primary" icon="el-icon-edit" circle @click="update(scope.row)"></el-button>
             <el-button type="danger" icon="el-icon-delete" circle @click="disable(scope.row.bedId)"></el-button>
         </template>
       </el-table-column>
@@ -198,7 +203,6 @@
         </el-pagination>
     </div></center>
     
-   
 <!-- 添加的模态框 -->
 <el-dialog title="添加" :visible.sync="bedInfoAdd" width="700px">
   <el-form>
@@ -234,7 +238,7 @@
         <el-select v-model="manufacturer.manufacturerId" @change="manufacturerChange($event)">
             <el-option  label="请选择生产厂家" value="-1" ></el-option>
             <el-option
-                    v-for="item in manufacturerList"
+                    v-for="item in bed.manufacturerList"
                     :key="item.manufacturerId"
                     :label="item.name"
                     :value="item.manufacturerId">
@@ -290,10 +294,10 @@
       <el-input v-model="bed.number" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="生产厂家" :label-width="formWidth">
-        <el-select v-model="manufacturer.manufacturerId" @change="manufacturerChange($event)">
-            <el-option  label="请选择生产厂家" value="-1" disabled="disabled"></el-option>
+        <el-select v-model="manufacturer.manufacturerId" @change="manufacturerChange($event)" disabled="disabled">
+            <el-option  label="请选择生产厂家" value="-1"></el-option>
             <el-option
-                    v-for="item in manufacturerList"
+                    v-for="item in bed.manufacturerList"
                     :key="item.manufacturerId"
                     :label="item.name"
                     :value="item.manufacturerId">
@@ -309,8 +313,8 @@
     <el-form-item label="厂家联系电话" :label-width="formWidth">
       <el-input v-model="manufacturer.phonenumber" disabled="disabled" autocomplete="off"></el-input>
     </el-form-item>
-
   </el-form>
+  
   <div slot="footer" class="dialog-footer">
     <el-button @click="bedInfoUpd = false">取 消</el-button>
     <el-button type="primary" @click="saveUpd()">确 定</el-button>
@@ -351,7 +355,8 @@ export default {
                 departmentId:"-1",
                 number:null,
                 departmentList:null,
-                hospitalList:null
+                hospitalList:null,
+                manufacturerList:null,
             },
             manufacturer:{
                 manufacturerId:"-1",
@@ -383,10 +388,23 @@ export default {
       }
     },
     methods:{
-      //初始化数据
+      //初始化添加时的数据
         init(){
-            this.bed={bedId:null,hospitalId:"-1",departmentId:"-1",number:null,departmentList:null,hospitalList:this.hospitalList};
-            this.manufacturer={manufacturerId:"-1",contactperson:null,phonenumber:null,contactphone:null};
+            this.bed={
+              bedId:null,
+              hospitalId:"-1",
+              departmentId:"-1",
+              number:null,
+              departmentList:null,
+              hospitalList:this.hospitalList,
+              manufacturerList:this.manufacturerList
+            };
+            this.manufacturer={
+              manufacturerId:"-1",
+              contactperson:null,
+              phonenumber:null,
+              contactphone:null
+            };
         },
         //查询数据
         findByExample(){
@@ -410,6 +428,8 @@ export default {
                 console.log(res);
                 this.tableData=res.data.bedList;
                 this.manufacturerList=res.data.manufacturerList;
+                this.bed.manufacturerList=res.data.manufacturerList;
+                this.bed.hospitalList=res.data.hospitalList;
                 this.hospitalList=res.data.hospitalList;
                 this.total=res.data.pageBean.total;
             })
@@ -486,7 +506,6 @@ export default {
             .catch(err => {
                 console.error(err); 
             })
-            this.init();
         },
         //页码改变时调用
         changePageNum(pageNum){
@@ -525,9 +544,24 @@ export default {
                   }
               })
               .then(res => {
-                  this.departmentId="-1"
                   this.bed.departmentList=res.data.departmentList;
                   this.bed.departmentId="-1"
+              })
+              .catch(err => {
+                  console.error(err); 
+              })
+        },
+        //修改时默认的显示科室
+        getDepartmentWhenUpdate(hospitalId){
+            this.axios({
+                  method:'get',
+                  url: "http://localhost:9000/bed/findDepartment",
+                  params: {
+                      "hospitalId":hospitalId
+                  }
+              })
+              .then(res => {
+                  this.bed.departmentList=res.data.departmentList;
               })
               .catch(err => {
                   console.error(err); 
@@ -542,26 +576,34 @@ export default {
         },
         //添加的保存按钮事件
         save(){
-            this.checkOut();
-            if(this.flag){
-                this.bedInfoAdd = false;
-                this.axios({
-                  method:'post',
-                  url: 'http://localhost:9000/bed/save',
-                  params: {
-                      bedId:this.bed.bedId,
-                      manufacturerId:this.manufacturer.manufacturerId,
-                      departmentId:this.bed.departmentId,
-                      number:this.bed.number,
-                  }
-                })
-                .then(res => {
-                    this.findByExample();
+            
+            let checkBedId = /^[a-zA-Z]{5}$/
+            if(!checkBedId.test(this.bed.bedId)){
+              this.$notify({
+                title: '床位ID输入有误',
+                message: this.$createElement('b', { style: 'color: red'}, '请输入5位的床位ID---例：abcde')
+              });
+            }else {
+              this.checkOut();
+              if(this.flag){
+                  this.axios({
+                    method:'post',
+                    url: 'http://localhost:9000/bed/save',
+                    params: {
+                        bedId:this.bed.bedId,
+                        manufacturerId:this.manufacturer.manufacturerId,
+                        departmentId:this.bed.departmentId,
+                        number:this.bed.number,
+                    }
                   })
-                  .catch(err => {
-                      console.error(err); 
-                  })
-
+                  .then(res => {
+                      this.bedInfoAdd = false;
+                      this.findByExample();
+                    })
+                    .catch(err => {
+                        console.error(err); 
+                    })
+               }
             }
         },
         //保存修改
@@ -577,17 +619,19 @@ export default {
                       number:this.bed.number,
                   }
                 })
+                .then(res => {
+                    this.findByExample();
+                })
+                .catch(err => {
+                      console.error(err); 
+                })
           }
         },
         //校验输入的数据
         checkOut(){
+          let checkNumber = /^[a-zA-Z]{1}[0-9]{7}$/
           this.flag=false;
-          if(this.bed.bedId==null||this.bed.bedId.length!=5){
-              this.$notify({
-                title: '床位ID输入有误',
-                message: this.$createElement('b', { style: 'color: red'}, '请输入5位的床位ID')
-              });
-          }else if(this.bed.hospitalId=="-1"){
+          if(this.bed.hospitalId=="-1"){
               this.$notify({
                 title: '未选择医院',
                 message: this.$createElement('b', { style: 'color: red'}, '请选择医院')
@@ -597,10 +641,10 @@ export default {
                 title: '未选择科室',
                 message: this.$createElement('b', { style: 'color: red'}, '请选择科室')
               });
-          }else if(this.bed.number==null||this.bed.number.length!=8){
+          }else if(!checkNumber.test(this.bed.number)){
               this.$notify({
                 title: '床位编号输入有误',
-                message: this.$createElement('b', { style: 'color: red'}, '请输入8位的床位编号')
+                message: this.$createElement('b', { style: 'color: red'}, '请输入8位的床位编号---例：c1234567')
               });
           }else if(this.manufacturer.manufacturerId=="-1"){
               this.$notify({
@@ -617,30 +661,29 @@ export default {
             this.bedInfoAdd = true;
         },
         //点击更新按钮
-        update(bedId){
-            this.axios({
-                method:'get',
-                url: "http://localhost:9000/bed/findOne",
-                params: {
-                    "bedId":bedId
-                }
-            })
-            .then(res => {
-                console.log(res.data)
-                    this.bed={
-                      bedId:res.data.bed.bedId,
-                      hospitalId:res.data.bed.department.hospital.hospitalId,
-                      number:res.data.bed.number,
-                      hospitalList:this.hospitalList
-                    };
-                    this.getDepartmentDialog();
-                    this.bed.departmentId=res.data.bed.departmentId;
-                    this.manufacturer=res.data.bed.manufacturer;
-                    this.bedInfoUpd = true;
-                })
-                .catch(err => {
-                    console.error(err); 
-                })
+        update(bed){
+          console.log(bed)
+          this.bed.bedId=bed.bedId;
+
+          this.bed.hospitalId=bed.department.hospital.hospitalId;
+          this.bed.departmentId=bed.departmentId;
+          this.bed.number=bed.number;
+          this.manufacturer=bed.manufacturer;
+          this.bedInfoUpd = true;
+          this.getDepartmentWhenUpdate(this.bed.hospitalId);
+        },
+        exportBed(){
+            
+            let params = "?";
+            params+="bedId="+this.bedId+"&";
+            params+="hospitalId="+this.hospitalId+"&";
+            params+="departmentId="+this.departmentId+"&";
+            params+="power="+this.power+"&";
+            params+="status="+this.status+"&";
+            params+="beginTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
+            params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+            console.log(params);
+            window.location.href="http://localhost:9000/bed/downloadBedFile"+params;
             
         }
     }
