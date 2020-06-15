@@ -44,12 +44,6 @@
                     <el-option value="已完成"></el-option>
                     <el-option value="未支付"></el-option>
                     <el-option value="已退回"></el-option>
-                    <!--                    <el-option-->
-                    <!--                            v-for="item in ordersStatus"-->
-                    <!--                            :key="item.value"-->
-                    <!--                            :label="item.label"-->
-                    <!--                            :value="item.value">-->
-                    <!--                    </el-option>-->
                 </el-select>
             </el-col>
         </el-row>
@@ -66,9 +60,6 @@
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         :clearable="false">
-                    <!--                        :picker-options="pickerOptions">-->
-                    <!--                        value-format="yyyy-MM-dd">-->
-                    <!--                        format="yyyy/MM/dd">-->
                 </el-date-picker>
                 <el-button @click="getOrderList" type="small">确认</el-button>
                 <el-button @click="clearCondition" type="small">清除</el-button>
