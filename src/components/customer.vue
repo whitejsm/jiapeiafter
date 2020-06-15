@@ -56,7 +56,9 @@
       </el-col>
     </el-row>
     <div>
-      <el-divider content-position="left"><i class="el-icon-user"></i>  用户总数:{{countCustomer}}
+      <el-divider content-position="left">
+        <el-button type="success" icon="el-icon-download" @click="downloadXls">导出报表</el-button>
+        <i class="el-icon-user"></i>  用户总数:{{countCustomer}}
       </el-divider>
     </div>
     <el-table
@@ -157,7 +159,9 @@
     </el-dialog>
     <el-dialog title="订单详情" :visible.sync="dialogTableVisible">
       <div>
-        <el-divider content-position="left"><i class="el-icon-document-checked"></i>   订单总数:{{countOrders}}</el-divider>
+        <el-divider content-position="left">
+          <el-button type="success" icon="el-icon-download" @click="downloadXlsOrders()">导出报表</el-button>
+          <i class="el-icon-document-checked"></i>   订单总数:{{countOrders}}</el-divider>
       </div>
       <el-table :data="gridData">
         <el-table-column property="ordersId" label="订单号" width="100"></el-table-column>
@@ -227,7 +231,7 @@
           }]
         },
         timeSelect:[new Date('2020/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')],
-        searchInput:null,
+        searchInput:'',
         tableData: '',
         gridData:'',
         countCustomer:'',
@@ -245,9 +249,26 @@
         pageSize:15,
         total:null,
         pages:null,
+        cid:'',
       }
     },
     methods:{
+      downloadXlsOrders(){
+        let params = "?";
+        params+="customerId="+this.cid;
+        console.log(params);
+        window.location.href="http://localhost:9000/downloadOrders"+params;
+      },
+      downloadXls(){
+        let params = "?";
+        params+="phonenumber="+this.searchInput+"&";
+        params+="gender="+this.sex+"&";
+        params+="isuse="+this.level+"&";
+        params+="startTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
+        params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+        console.log(params);
+        window.location.href="http://localhost:9000/downloadCustomerAll"+params;
+      },
       clearAll(){
           this.timeSelect=[new Date('2020/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
           this.level='';
@@ -262,6 +283,7 @@
         this.form.status=isdelete;
       },
       showOrders(customerId){
+        this.cid=customerId;
         this.dialogTableVisible=true;
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},

@@ -10,14 +10,14 @@ import '@/assets/fonts/iconfont.css'
 import vueaxios from 'vue-axios'
 import axios from 'axios'
 import store from '@/store.js'
-import Qs from 'qs'
+import qs from 'qs'
 axios.defaults.withCredentials=true;
 // Vueaxios.defaults.baseURL="http://localhost:9000"
-Vue.use(ElementUI)
-Vue.use(vueaxios, axios)
+Vue.use(ElementUI);
+Vue.use(vueaxios, axios);
+Vue.prototype.$qs = qs;
 
-
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 
 /* eslint-disable no-new */
@@ -27,5 +27,4 @@ new Vue({
   components: { App },
   template: '<App/>',
   store,
-  Qs
 })

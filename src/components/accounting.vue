@@ -34,6 +34,7 @@
     <div>
       <el-divider content-position="left">
         <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogAddVisible = true">添加会计</el-button>
+        <el-button type="success" icon="el-icon-download" @click="downloadXls">导出报表</el-button>
         <i class="el-icon-user"></i>  会计总数:{{countAccounting}}
       </el-divider>
     </div>
@@ -219,7 +220,7 @@
           }]
         },
         timeSelect:[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')],
-        searchInput:null,
+        searchInput:'',
         tableData: '',
         countAccounting:'',
         dialogFormVisible: false,
@@ -291,6 +292,14 @@
       }
     },
     methods:{
+      downloadXls(){
+        let params = "?";
+        params+="phonenumber="+this.searchInput+"&";
+        params+="startTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
+        params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+        console.log(params);
+        window.location.href="http://localhost:9000/downloadAccount"+params;
+      },
       clearAll(){
         this.timeSelect=[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
         this.searchInput=''
