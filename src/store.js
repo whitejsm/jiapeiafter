@@ -12,6 +12,11 @@ export default new Vuex.Store({
     mutations: {
         increment(state){
             state.count++;
+        },
+        reset(state){
+          state.count=1;
+          state.id=null;
+          state.userName=null;
         }
     }
 })
