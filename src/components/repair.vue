@@ -34,6 +34,7 @@
     <div>
       <el-divider content-position="left">
         <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogAddVisible = true">添加维修人员</el-button>
+        <el-button type="success" icon="el-icon-download" @click="downloadXls">导出报表</el-button>
         <i class="el-icon-user"></i>  维修人员总数:{{countRepairman}}
       </el-divider>
     </div>
@@ -239,7 +240,7 @@
         <el-button type="primary" @click="addDepartment">添 加</el-button>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogTableVisible = false">关 闭</el-button>
+        <el-button @click="closeRe">关 闭</el-button>
       </div>
     </el-dialog>
 
@@ -248,22 +249,22 @@
         <el-divider content-position="left"><i class="el-icon-document-checked"></i>   维修记录总数:{{countRepair}}</el-divider>
       </div>
       <el-table :data="allRepairData">
-        <el-table-column property="bedId" label="医院名称" >
+        <el-table-column property="bed.department.hospital.hospitalname" label="医院名称" >
         </el-table-column>
-        <el-table-column property="bedId" label="科室名称" >
+        <el-table-column property="bed.department.departmentname" label="科室名称" width="100">
         </el-table-column>
         <el-table-column property="bedId" label="床位编号"  >
         </el-table-column>
         <el-table-column property="faultTitle" label="故障原因"  >
         </el-table-column>
-        <el-table-column property="faultStatus" label="维修状态"  >
+        <el-table-column property="faultStatus" label="维修状态" width="70"  >
         </el-table-column>
         <el-table-column property="createTime" label="维修时间"  >
           <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogRepairVisible = false">关 闭</el-button>
+        <el-button @click="dialogRepairVisible=false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -303,7 +304,7 @@
           }]
         },
         timeSelect:[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')],
-        searchInput:null,
+        searchInput:'',
         tableData: '',
         countRepairman:'',
         hospitalData:'',
@@ -391,26 +392,37 @@
         pageSize:15,
         total:null,
         pages:null,
+        repairManId:''
       }
     },
     methods:{
+      downloadXls(){
+        let params = "?";
+        params+="phonenumber="+this.searchInput+"&";
+        params+="startTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
+        params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+        console.log(params);
+        window.location.href="http://localhost:9000/downloadRepairman"+params;
+      },
+      closeRe(){
+        this.dept='';
+        this.dialogTableVisible = false;
+      },
       addDepartment(){
         console.log("进入提交添加医院");
-        console.log(this.dept.hospitalId);
-        var arr2 = [];
-        for(var i=0;i<this.dept.departmentId.length;i++){
-          arr2.push(this.dept.departmentId[i]);
-        }
-        console.log(arr2);
-        let a=JSON.stringify(arr2);
+        console.log(this.dept.departmentId);
 
+        var comValue = JSON.stringify(this.dept.departmentId);
+        var asa =this.$qs.parse(this.$qs.stringify(this.dept.departmentId));
+        console.log(asa);
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
-          method:'get',
+          method:'post',
           url: 'http://localhost:9000/repairAddDepartment',
           params:{
+            repairManId:this.repairManId,
             hospitalId:this.dept.hospitalId,
-            departmentId:qs.stringify(this.dept),
+            department:asa
           }
         })
           .then(res => {
@@ -484,6 +496,7 @@
             });
             this.allRepairData=res.data.allRepair;
             this.countRepair=res.data.countRepair;
+            console.log(this.allRepairData);
           })
           .catch(err => {
             console.error(err);
@@ -503,6 +516,7 @@
           })
       },
       showHospital(userinfoId){
+        this.repairManId=userinfoId;
         this.getHospitals();
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
