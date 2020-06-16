@@ -13,6 +13,9 @@ import faults from '@/components/aftersale/faults'    //故障
 import simpleReport from '@/components/SimpleReport'
 import visibleReport from '@/components/VisibleReport'
 import saleReport from '@/components/SaleReport'
+import echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts
 Vue.use(Router);
 
 const originalPush = Router.prototype.push

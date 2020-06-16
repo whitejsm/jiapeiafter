@@ -24,7 +24,7 @@
             </el-col>
             <el-col :span="6">
                 <el-select v-model="hospitalId" placeholder="--选择医院--"
-                            @change="changeHospital($event)">
+                            @change="changeHospital">
                     <el-option :value="-1" label="选择医院"></el-option>
                     <el-option
                             v-for="item in hospitalList"
@@ -141,16 +141,22 @@
             }
         },
         mounted() {
-            this.getDistributorList();
+            var roleId = this.$store.state.roleId;
+            if(roleId == 7) {
+                this.getDistributorList();
+            }
+
             this.getReportList();
         },
         methods: {
-            changeHospital(hIndex) {
-                if(hIndex > 0) {
-                    this.departmentList = this.hospitalList[hIndex-1].departmentList;
-                } else {
-                    this.departmentList = null;
-                }
+            changeHospital() {
+                var obj = this.hospitalList.find(
+                    item=>{
+                        return item.hospitalId==this.hospitalId //筛选出对应数据
+                    }
+                );
+                this.departmentList = (typeof obj !== 'undefined' ? obj.departmentList : null);
+                console.log(this.departmentList)
                 this.departmentId = -1;
             },
             getDistributorList() {
@@ -168,6 +174,8 @@
             getHospitalList() {
                 this.hospitalList = null;
                 this.hospitalId = -1;
+                this.departmentList = null;
+                this.departmentId = -1;
                 this.axios({
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     method: 'get',
