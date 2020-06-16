@@ -1,8 +1,9 @@
 <template>
 
   <div class="login">
-    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 70px;z-index: 9999;position: absolute;left:50%;
-margin-left:-325px;">
+    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 70px;z-index: 9999;position: absolute;left: 0;
+    right: 0;
+    margin: auto;">
       佳陪陪护床后台管理系统
     </div>
     <div id="apppp">
