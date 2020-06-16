@@ -5,15 +5,15 @@
                 <span>分销商</span>
             </el-col>
             <el-col :span="6">
-                <el-select v-model="hospitalId" placeholder="--所有分销商--"
-                           @change="">
-                    <el-option value="-1" label="所有分销商"></el-option>
-                    <!--                    <el-option-->
-                    <!--                            v-for="item in hospitalList"-->
-                    <!--                            :key="item.hospitalId"-->
-                    <!--                            :label="item.hospitalname"-->
-                    <!--                            :value="item.hospitalId">-->
-                    <!--                    </el-option>-->
+                <el-select v-model="distributorId" placeholder="--所有分销商--"
+                           @change="getHospitalList">
+                    <el-option :value="-1" label="所有分销商"></el-option>
+                    <el-option
+                            v-for="item in distributorList"
+                            :key="item.userinfoId"
+                            :label="item.name"
+                            :value="item.userinfoId">
+                    </el-option>
                 </el-select>
             </el-col>
         </el-row>
@@ -23,14 +23,15 @@
                 <span>选择医院</span>
             </el-col>
             <el-col :span="6">
-                <el-select v-model="ordersStatus" placeholder="--选择医院--">
-                    <el-option value="-1" label="选择医院"></el-option>
-                    <!--                    <el-option-->
-                    <!--                            v-for="item in departmentList"-->
-                    <!--                            :key="item.departmentId"-->
-                    <!--                            :label="item.departmentname"-->
-                    <!--                            :value="item.departmentId">-->
-                    <!--                    </el-option>-->
+                <el-select v-model="hospitalId" placeholder="--选择医院--"
+                            @change="changeHospital($event)">
+                    <el-option :value="-1" label="选择医院"></el-option>
+                    <el-option
+                            v-for="item in hospitalList"
+                            :key="item.hospitalId"
+                            :label="item.hospitalname"
+                            :value="item.hospitalId">
+                    </el-option>
                 </el-select>
             </el-col>
             <el-col :span="2">
@@ -38,14 +39,17 @@
             </el-col>
             <el-col :span="6">
                 <el-select v-model="departmentId" placeholder="--选择科室--">
-                    <el-option value="-1" label="选择科室"></el-option>
-                    <!--                    <el-option-->
-                    <!--                            v-for="item in departmentList"-->
-                    <!--                            :key="item.departmentId"-->
-                    <!--                            :label="item.departmentname"-->
-                    <!--                            :value="item.departmentId">-->
-                    <!--                    </el-option>-->
+                    <el-option :value="-1" label="选择科室"></el-option>
+                    <el-option
+                            v-for="item in departmentList"
+                            :key="item.departmentId"
+                            :label="item.departmentname"
+                            :value="item.departmentId">
+                    </el-option>
                 </el-select>
+            </el-col>
+            <el-col :span="2">
+                <el-button @click="getReportList">查询</el-button>
             </el-col>
         </el-row>
         <br/>
@@ -85,13 +89,13 @@
             <el-table-column prop="date" label="id" width="40">
                 <template slot-scope="scope">{{scope.$index + 1}}</template>
             </el-table-column>
-            <el-table-column prop="date" label="日期"></el-table-column>
-            <el-table-column prop="" label="分销商"></el-table-column>
-            <el-table-column prop="" label="医院名称"></el-table-column>
-            <el-table-column prop="" label="可是名称"></el-table-column>
-            <el-table-column prop="" label="床位数（张）"></el-table-column>
-            <el-table-column prop="" label="租赁次数（张）"></el-table-column>
-            <el-table-column prop="" label="总租金（元）"></el-table-column>
+            <el-table-column prop="orderDate" label="日期"></el-table-column>
+            <el-table-column prop="distributorName" label="分销商"></el-table-column>
+            <el-table-column prop="hospitalName" label="医院名称"></el-table-column>
+            <el-table-column prop="departmentName" label="科室名称"></el-table-column>
+            <el-table-column prop="bedCount" label="床位数（张）"></el-table-column>
+            <el-table-column prop="leaseCount" label="租赁次数（张）"></el-table-column>
+            <el-table-column prop="rentCount" label="总租金（元）"></el-table-column>
         </el-table>
         <el-pagination
                 style="text-align: center"
@@ -109,16 +113,23 @@
         name: "SaleReport",
         data() {
             return {
+                // 筛选条件标签列表
+                departmentList: null,
+                hospitalList: null,
+                distributorList: null,
                 // 分页
-                total: '',
-                pageSize: '',
+                total: 1,
+                pageSize: 1,
+                pageNum: 1,
                 // 筛选条件
-                departmentId: '',
-                hospitalId: '',
-                userinfoId: '',
-                tableData: '',
+                departmentId: -1,
+                hospitalId: -1,
+                distributorId: -1,
+                // 表格数据
+                tableData: null,
                 // 年月日选择器相关
                 dateWidth: 4,
+                selectType: null,
                 month: {
                     isClick: false,
                     value: ''
@@ -129,9 +140,53 @@
                 }
             }
         },
+        mounted() {
+            this.getDistributorList();
+            this.getReportList();
+        },
         methods: {
-            changePage() {
-
+            changeHospital(hIndex) {
+                if(hIndex > 0) {
+                    this.departmentList = this.hospitalList[hIndex-1].departmentList;
+                } else {
+                    this.departmentList = null;
+                }
+                this.departmentId = -1;
+            },
+            getDistributorList() {
+                this.axios.get(
+                    "http://localhost:9000/getDistributor"
+                ).then(res => {
+                    if(res.data.result == 'success') {
+                        this.distributorList = res.data.distributorList;
+                        this.getHospitalList();
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
+            },
+            getHospitalList() {
+                this.hospitalList = null;
+                this.hospitalId = -1;
+                this.axios({
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    method: 'get',
+                    url: 'http://localhost:9000/getDistributorHospital',
+                    params: {
+                        distributorId: this.distributorId
+                    }
+                }).then(res => {
+                    if (res.data.result == 'success') {
+                        console.log(res.data.hospitalList);
+                        this.hospitalList = res.data.hospitalList;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
+            },
+            changePage(pageNum) {
+                this.pageNum = pageNum;
+                this.getReportList();
             },
             dateInit() {
                 this.dateWidth = 4;
@@ -139,6 +194,7 @@
                 this.month.value = '';
                 this.year.isClick = false;
                 this.year.value = '';
+                this.selectType = null;
             },
             pressDay() {
                 this.dateInit();
@@ -151,17 +207,47 @@
                 this.dateWidth = 8;
             },
             pressYear() {
+                this.dateInit();
                 // 直接获取按年显示数据
+                this.selectType = 'YEAR';
             },
             getMonth() {
                 this.month.isClick = false;
                 this.dateWidth = 4;
                 // 根据选择月显示每日数据
+                this.selectType = 'DAY';
             },
             getYear() {
                 this.year.isClick = false;
                 this.dateWidth = 4;
                 // 根据选择年显示每月数据
+                this.selectType = 'MONTH';
+            },
+            getReportList() {
+                this.axios({
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    method: 'get',
+                    url: 'http://localhost:9000/getSaleReport',
+                    params: {
+                        hospitalId: this.hospitalId,
+                        departmentId: this.departmentId,
+                        distributorId: this.distributorId,
+                        selectType: this.selectType,
+                        year: this.year.value,
+                        month: this.month.value,
+                        pageSize: this.pageSize,
+                        pageNum: this.pageNum,
+                    }
+                }).then(res => {
+                    if (res.data.result == 'success') {
+                        this.tableData = res.data.saleReportList;
+                        this.total = res.data.pageBean.total;
+                        this.pageSize = res.data.pageBean.pageSize;
+                        this.pageNum = res.data.pageBean.pageNum;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
             }
         },
         filters: {

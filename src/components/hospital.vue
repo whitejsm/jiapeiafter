@@ -48,6 +48,7 @@
     <div>
       <el-divider content-position="left">
         <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogAddVisible = true">添加人员</el-button>
+        <el-button type="success" icon="el-icon-download" @click="downloadXls">导出报表</el-button>
         <i class="el-icon-user"></i>  人员总数:{{countMedical}}
       </el-divider>
     </div>
@@ -259,7 +260,7 @@
           }]
         },
         timeSelect:[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')],
-        searchInput:null,
+        searchInput:'',
         tableData: '',
         countMedical:'',
         dialogFormVisible: false,
@@ -336,6 +337,15 @@
       }
     },
     methods:{
+      downloadXls(){
+        let params = "?";
+        params+="phonenumber="+this.searchInput+"&";
+        params+="role="+this.role+"&";
+        params+="startTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
+        params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+        console.log(params);
+        window.location.href="http://localhost:9000/downloadHospitalers"+params;
+      },
       clearAll(){
         this.timeSelect=[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
         this.searchInput='';

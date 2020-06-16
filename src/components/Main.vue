@@ -7,7 +7,7 @@
         </div>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
-            {{this.$store.state.userName}} （{{this.$store.state.roleName}}）
+            {{this.$store.state.userName}} ({{this.$store.state.roleName}})
               <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -23,7 +23,8 @@
                    class="el-menu-vertical-demo"
                    background-color="#545c64"
                    text-color="#fff"
-                   active-text-color="#fff" >
+                   active-text-color="#fff"
+                   style="border-right: 0px">
             <div v-for="(permission,i) in permissionList" index="" :key="i">
               <el-submenu v-for="(childOne, childOneIndex) in permission.children" :key="childOneIndex"
                           :index="childOneIndex + ''">
@@ -67,10 +68,20 @@
                 console.log(key, keyPath);
             },
             handleCommand(command) {
-              this.$message('click on item ' + command);
+              console.log(command);
+              if (command=='b'){
+                console.log(this.$store.state.id);
+                console.log("重置state");
+                this.$store.commit('reset');
+                console.log(this.$store.state.id);
+                window.location.href = '/';
+              }
             }
         },
         mounted() {
+          if (this.$store.state.id==null){
+            window.location.href = '/';
+          }
           this.axios({
             headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
             method:'get',
