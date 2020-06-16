@@ -7,7 +7,9 @@ export default new Vuex.Store({
     state: {
         count: 1,
         id: null,
-        userName:null
+        userName:null,
+        roleId:null,
+        roleName:null
     },
     mutations: {
         increment(state){

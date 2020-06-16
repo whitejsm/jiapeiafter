@@ -332,7 +332,7 @@ export default {
     data(){
        return {
             flag:false, //校验新增和修改的数据
-            bedId:null,
+            bedId:"",
             hospitalId:"-1",
             departmentId:"-1",
             status:"-1",
@@ -350,7 +350,7 @@ export default {
             number:null,
 
             bed:{
-                bedId:null,
+                bedId:"",
                 hospitalId:"-1",
                 departmentId:"-1",
                 number:null,
@@ -371,7 +371,11 @@ export default {
     },
     mounted() {
         this.findByExample();
-        
+        console.log("this.$store.state.count-------------"+this.$store.state.count)
+        console.log("this.$store.state.id-------------"+this.$store.state.id)
+        console.log("this.$store.state.userName----------"+this.$store.state.userName)
+        console.log("this.$store.state.roleId----------"+this.$store.state.roleId)
+        console.log("this.$store.state.roleName----------"+this.$store.state.roleName)
     },
     filters:{//局部过滤器
     //时间过滤器
@@ -391,7 +395,7 @@ export default {
       //初始化添加时的数据
         init(){
             this.bed={
-              bedId:null,
+              bedId:"",
               hospitalId:"-1",
               departmentId:"-1",
               number:null,
@@ -422,6 +426,8 @@ export default {
 
                     "pageNum":this.pageNum,
                     "pageSize":this.pageSize,
+                    roleId:this.$store.state.roleId,
+                    userInfoId:this.$store.state.id,
                 }
             })
             .then(res => {
@@ -464,24 +470,24 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-            this.$message({
-                type: 'success',
-                message: '停用成功!',
-            });
-            this.axios({
-                method:'get',
-                url: "http://localhost:9000/bed/disable",
-                params: {
-                    "bedId":bedId
-                }
-            })
-            .then(res => {
-                console.log(res.data.result+"  "+res.data.msg)
-                this.findByExample();
-            })
-            .catch(err => {
-                console.error(err); 
-            })
+                this.$message({
+                    type: 'success',
+                    message: '停用成功!',
+                });
+                this.axios({
+                    method:'get',
+                    url: "http://localhost:9000/bed/disable",
+                    params: {
+                        "bedId":bedId
+                    }
+                })
+                .then(res => {
+                    console.log(res.data.result+"  "+res.data.msg)
+                    this.findByExample();
+                })
+                .catch(err => {
+                    console.error(err); 
+                })
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -523,7 +529,9 @@ export default {
                   method:'get',
                   url: "http://localhost:9000/bed/findDepartment",
                   params: {
-                      "hospitalId":this.hospitalId
+                      "hospitalId":this.hospitalId,
+                      roleId:this.$store.state.roleId,
+                      userInfoId:this.$store.state.id,
                   }
               })
               .then(res => {
@@ -540,7 +548,9 @@ export default {
                   method:'get',
                   url: "http://localhost:9000/bed/findDepartment",
                   params: {
-                      "hospitalId":this.bed.hospitalId
+                      "hospitalId":this.bed.hospitalId,
+                       roleId:this.$store.state.roleId,
+                      userInfoId:this.$store.state.id,
                   }
               })
               .then(res => {
@@ -557,7 +567,9 @@ export default {
                   method:'get',
                   url: "http://localhost:9000/bed/findDepartment",
                   params: {
-                      "hospitalId":hospitalId
+                      "hospitalId":hospitalId,
+                      roleId:this.$store.state.roleId,
+                      userInfoId:this.$store.state.id,
                   }
               })
               .then(res => {
@@ -568,11 +580,33 @@ export default {
               })
         },
         //生产商变换的时候调用
-        manufacturerChange(event){
-            this.manufacturer.manufacturerId = this.manufacturerList[event-1].manufacturerId;
-            this.manufacturer.contactperson = this.manufacturerList[event-1].contactperson;
-            this.manufacturer.phonenumber = this.manufacturerList[event-1].phonenumber;
-            this.manufacturer.contactphone = this.manufacturerList[event-1].contactphone;    
+        manufacturerChange(manufacturerId){
+            /*
+asdasdasdasdsdfxcvdvjishavhaahjkfjbcvncvxcbmzvbmxvbnxbvmvz
+sdjfbsadfbansdbfasfhsakfhdlasdhflsadjkflasdlfasd
+sfjasfjasdfjaskgdfjasdfhasdggaj
+asdfbasdgfjashdflkasdjflkasdhf
+sfdjaskdfsakdfksadfasfhasjkfhlkalh
+这里不用改发请求，后边看看怎么改
+
+            */
+            console.log(manufacturerId);
+            this.axios({
+              method:'get',
+              url: "http://localhost:9000/bed/findManufacturerById",
+              params: {
+                manufacturerId:manufacturerId
+              }
+            }).then(res => {
+                        console.log(res);
+                        this.manufacturer.manufacturerId = res.data.manufacturerId;
+                        this.manufacturer.contactperson = res.data.contactperson;
+                        this.manufacturer.phonenumber = res.data.phonenumber;
+                        this.manufacturer.contactphone = res.data.contactphone;
+                    })
+                    .catch(err => {
+                        console.error(err); 
+                    })
         },
         //添加的保存按钮事件
         save(){
@@ -681,7 +715,9 @@ export default {
             params+="power="+this.power+"&";
             params+="status="+this.status+"&";
             params+="beginTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
-            params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
+            params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString()+"&";
+            params+="roleId="+this.$store.state.roleId+"&";
+            params+="userInfoId="+this.$store.state.id;
             console.log(params);
             window.location.href="http://localhost:9000/bed/downloadBedFile"+params;
             
