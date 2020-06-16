@@ -1,8 +1,30 @@
 <template>
 
   <div class="login">
-    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 50px">
+    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 70px;z-index: 9999;position: absolute;left:50%;
+margin-left:-325px;">
       佳陪陪护床后台管理系统
+    </div>
+    <div id="apppp">
+      <vue-particles
+        color="#dedede"
+        height="700px"
+        :particleOpacity="0.7"
+        :particlesNumber="90"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#FFFFFF"
+        :linesWidth="1"
+        :lineLinked="true"
+        :lineOpacity="1"
+        :linesDistance="200"
+        :moveSpeed="3"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="repulse"
+      >
+      </vue-particles>
     </div>
     <div class="login-box">
       <div class="login-head">
@@ -99,11 +121,14 @@
             }
         }
     }
+
 </script>
 
 <style lang="less"  scoped>
   .login {
-    /*background-color: #2b4b6b;*/
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
     height: 100%;
     background-image: linear-gradient(to bottom , #7A88FF, #7AFFAF);
   }
