@@ -68,7 +68,6 @@
                 console.log(key, keyPath);
             },
             handleCommand(command) {
-              console.log(command);
               if (command=='b'){
                 console.log(this.$store.state.id);
                 console.log("重置state");
