@@ -16,7 +16,7 @@ axios.defaults.withCredentials=true;
 Vue.use(ElementUI);
 Vue.use(vueaxios, axios);
 Vue.prototype.$qs = qs;
-
+//mkkm
 Vue.config.productionTip = false;
 
 
