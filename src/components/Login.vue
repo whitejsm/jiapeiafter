@@ -1,18 +1,45 @@
 <template>
+
   <div class="login">
+    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 70px;z-index: 9999;position: absolute;left: 0;
+    right: 0;
+    margin: auto;">
+      佳陪陪护床后台管理系统
+    </div>
+    <div id="apppp">
+      <vue-particles
+        color="#dedede"
+        height="700px"
+        :particleOpacity="0.7"
+        :particlesNumber="90"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#FFFFFF"
+        :linesWidth="1"
+        :lineLinked="true"
+        :lineOpacity="1"
+        :linesDistance="200"
+        :moveSpeed="3"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="repulse"
+      >
+      </vue-particles>
+    </div>
     <div class="login-box">
       <div class="login-head">
         <img src="@/assets/img/1.jpg" alt="">
       </div>
       <el-form  :model="loginForm" :rules="loginRules" ref="loginForm" class="login-form">
         <el-form-item prop="username">
-          <el-input prefix-icon="iconfont icon-user"
+          <el-input prefix-icon="el-icon-user-solid"
                     v-model="loginForm.username"
                     placeholder="请输入账号"
                    ></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input prefix-icon="iconfont icon-3702mima"
+          <el-input prefix-icon="el-icon-s-cooperation"
                     placeholder="请输入密码"
                     v-model="loginForm.password"
                     type="password"></el-input>
@@ -95,12 +122,16 @@
             }
         }
     }
+
 </script>
 
 <style lang="less"  scoped>
   .login {
-    background-color: #2b4b6b;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
     height: 100%;
+    background-image: linear-gradient(to bottom , #7A88FF, #7AFFAF);
   }
   .login-box {
     height: 300px;
@@ -108,7 +139,7 @@
     background-color: #fff;
     border-radius: 5px;
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%,-50%);
   }

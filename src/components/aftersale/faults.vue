@@ -970,7 +970,7 @@
                 params+="userInfoId="+this.$store.state.id;
                 console.log(params);
                 window.location.href="http://localhost:9000/faults/downloadFaultFile";
-            }
+            }//fddkhasidjsajkfhsol
         },
         filters:{//局部过滤器
              //时间过滤器
