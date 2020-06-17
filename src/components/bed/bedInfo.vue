@@ -90,7 +90,7 @@
     <br/>
 
 
-    <el-button type="danger"  @click="delChecked()">删除选中</el-button>
+    <el-button type="danger"  @click="delChecked()">获得选中ID</el-button>
     <el-button type="primary" @click="delChecked()">导入床位</el-button>
     <el-button type="primary" @click="exportBed()">导出床位</el-button>
     <el-button type="primary" @click="add()">添加信息</el-button>
