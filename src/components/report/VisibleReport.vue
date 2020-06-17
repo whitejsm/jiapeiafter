@@ -107,7 +107,7 @@
 
 <script>
     import echarts from "echarts";
-    import "../../node_modules/echarts/map/js/china.js";
+    import "echarts/map/js/china.js";
 
     export default {
         name: "VisibleReport",

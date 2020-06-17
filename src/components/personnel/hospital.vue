@@ -220,7 +220,7 @@
 
 <script>
   export default {
-    name: "accounting",
+    name: "hospital",
     data() {
       return {
         userlevel: [{

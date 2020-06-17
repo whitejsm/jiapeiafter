@@ -272,7 +272,7 @@
 
 <script>
   export default {
-    name: "accounting",
+    name: "repair",
     data() {
       return {
         loading:true,

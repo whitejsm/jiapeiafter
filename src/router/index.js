@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/components/Main'                //主界面
 import Login from '@/components/Login'              //登录
-import order from '@/components/order'              //订单
+import order from '@/components/order/order'              //订单
 import customer from '@/components/customer/customer'        //前台用户
 import shareholder from '@/components/personnel/shareholder'  //股东/经销商
 import hospital from '@/components/personnel/hospital'        //医院
@@ -10,9 +10,9 @@ import repair from '@/components/personnel/repair'            //维修人员
 import accounting from '@/components/personnel/accounting'    //会计
 import bedInfo from '@/components/bed/bedInfo'      //床位信息
 import faults from '@/components/aftersale/faults'    //故障
-import simpleReport from '@/components/SimpleReport'
-import visibleReport from '@/components/VisibleReport'
-import saleReport from '@/components/SaleReport'
+import simpleReport from '@/components/report/SimpleReport'
+import visibleReport from '@/components/report/VisibleReport'
+import saleReport from '@/components/report/SaleReport'
 import echarts from 'echarts'
 import login2 from '@/components/login2'
 Vue.prototype.$echarts = echarts
@@ -28,7 +28,7 @@ export default new Router({
       {path: '/', name: ' ', component: Login},
       {path: '/Main', name: 'main', component: Main,
         children:[
-          {component:order,path:"/order"},
+          {component:order,path:"/order/order"},
           {component:customer,path:"/customer/customer"},
           {component:shareholder,path:"/personnel/shareholder"},
           {component:hospital,path:"/personnel/hospital"},
@@ -36,9 +36,9 @@ export default new Router({
           {component:accounting,path:"/personnel/accounting"},
           {component:bedInfo,path:"/bed/bedInfo"},
           {component:faults,path:"/aftersale/faults"},
-          {component:simpleReport,path:"/simpleReport"},
-          {component:visibleReport,path:"/visibleReport"},
-          {component:saleReport,path:"/saleReport"},
+          {component:simpleReport,path:"/report/simpleReport"},
+          {component:visibleReport,path:"/report/visibleReport"},
+          {component:saleReport,path:"/report/saleReport"},
         ]},
       {path: '/login2', name: ' ', component: login2},
     ]

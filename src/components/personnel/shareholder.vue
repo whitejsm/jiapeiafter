@@ -297,7 +297,7 @@
 
 <script>
   export default {
-    name: "Shareholder",
+    name: "shareholder",
     data() {
       return {
         userlevel: [{
