@@ -68,7 +68,7 @@
             ],
             password: [
               { required: true, message: '请输入密码', trigger: 'blur' },
-              { min: 8, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
+              { min: 6, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
             ]
           }
         }

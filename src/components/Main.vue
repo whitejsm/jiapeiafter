@@ -11,7 +11,7 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">个人信息</el-dropdown-item>
+            <el-dropdown-item command="a">修改密码</el-dropdown-item>
             <el-dropdown-item command="b">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -47,20 +47,102 @@
         </el-main>
       </el-container>
     </el-container>
-
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
+      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="密码" prop="pass">
+          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
     export default {
         data() {
+
+          var validatePass = (rule, value, callback) => {
+            if (value === '') {
+              callback(new Error('请输入密码'));
+            } else {
+              let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}/;
+              if (!check.test(value)) {
+                callback(new Error('以字母开头，只能包含字母、数字，6-18位!'));
+              }
+              if (this.ruleForm.checkPass !== '') {
+                this.$refs.ruleForm.validateField('checkPass');
+              }
+              callback();
+            }
+          };
+          var validatePass2 = (rule, value, callback) => {
+            let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}/;
+            if (value === '') {
+              callback(new Error('请再次输入密码'));
+            } else if (value !== this.ruleForm.pass) {
+              callback(new Error('两次输入密码不一致!'));
+            } else if (!check.test(value)) {
+              callback(new Error('以字母开头，只能包含字母、数字，6-18位!'));
+            }
+            else {
+              callback();
+            }
+          };
             return {
                 tableData: [],
                 permissionList: null,
                 userName:'',
-            }
+              dialogFormVisible: false,
+              ruleForm: {
+                pass: '',
+                checkPass: '',
+              },
+              rules: {
+                pass: [
+                  { validator: validatePass, trigger: 'blur' }
+                ],
+                checkPass: [
+                  { validator: validatePass2, trigger: 'blur' }
+                ],
+              }
+            };
         },
         methods: {
+          submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+              if (valid) {
+                this.axios({
+                  headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+                  method:'post',
+                  url: 'http://localhost:9000/changePassword',
+                  params:{
+                    newPs:this.ruleForm.checkPass,
+                  }
+                })
+                  .then(res => {
+                    if(res.data==true){
+                      this.logout();
+                    }
+                  })
+                  .catch(err => {
+                    console.error(err);
+                  })
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
+          resetForm(formName) {
+            this.$refs[formName].resetFields();
+          },
             handleOpen(key, keyPath) {
                 console.log(key, keyPath);
             },
@@ -68,14 +150,33 @@
                 console.log(key, keyPath);
             },
             handleCommand(command) {
-              if (command=='b'){
-                console.log(this.$store.state.id);
-                console.log("重置state");
-                this.$store.commit('reset');
-                console.log(this.$store.state.id);
-                window.location.href = '/';
+              if(command=='a'){
+                this.dialogFormVisible=true;
               }
-            }
+              if (command=='b'){
+                this.logout();
+              }
+            },
+          logout(){
+            console.log(this.$store.state.id);
+            console.log("重置state");
+            this.axios({
+              headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+              method:'get',
+              url: 'http://localhost:9000/logout',
+              params:{
+                newPs:this.ruleForm.checkPass,
+              }
+            })
+              .then(res => {
+              })
+              .catch(err => {
+                console.error(err);
+              })
+            this.$store.commit('reset');
+            console.log(this.$store.state.id);
+            window.location.href = '/';
+          }
         },
         created() {
           if (this.$store.state.id==null){
