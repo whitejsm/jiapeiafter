@@ -77,10 +77,12 @@
               }
             }
         },
-        mounted() {
+        created() {
           if (this.$store.state.id==null){
             window.location.href = '/';
           }
+        },
+      mounted() {
           this.axios({
             headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
             method:'get',

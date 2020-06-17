@@ -141,7 +141,8 @@
                 distributionData: {
                     cityNameList: null,
                     hospitalCountList: null
-                }
+                },
+                valueList: null
             }
         },
         mounted() {
@@ -153,6 +154,85 @@
             this.drawDistributionBarLine();
         },
         methods: {
+            async getProvinceValueList() {
+                await this.axios.get("http://localhost:9000/getProvinceValueList").then(res => {
+                    if (res.data.result == 'success') {
+                        this.valueList = res.data.valueList;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
+            },
+            async chinaConfigure() {
+                await this.getProvinceValueList();
+                let myChart = echarts.init(this.$refs.myEchart); //这里是为了获得容器所在位置
+                window.onresize = myChart.resize;
+                myChart.setOption({ // 进行相关配置
+                    backgroundColor: "#E6E6E6",
+                    tooltip: {}, // 鼠标移到图里面的浮动提示框
+                    dataRange: {
+                        show: true,
+                        min: 0,
+                        max: 10001,
+                        text: ['High', 'Low'],
+                        splitList: [
+                            {start: 10001, label: '10001以上', color: '#FF6699'},
+                            {start: 5001, end: 10000, label: '5001-10000', color: '#CC3300'},
+                            {start: 1001, end: 5000, label: '1001-5000', color: '#F7BB37'},
+                            {start: 501, end: 1000, label: '501-1000', color: '#3BAE56'},
+                            {start: 101, end: 500, label: '101-500', color: '#92D050'},
+                            {start: 1, end: 100, label: '1-100', color: '#3899FF'},
+                            {start: 0, end: 0, label: '', color: '#BFBFBF'}
+                        ],
+                        realtime: true,
+                        calculable: false,
+                    },
+                    geo: { // 这个是重点配置区
+                        map: 'china', // 表示中国地图
+                        roam: true,
+                        label: {
+                            normal: {
+                                show: true, // 是否显示对应地名
+                                textStyle: {
+                                    color: 'rgba(0,0,0,0.4)'
+                                }
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderColor: 'rgba(0, 0, 0, 0.2)'
+                            },
+                            emphasis: {
+                                areaColor: null,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                shadowBlur: 20,
+                                borderWidth: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'scatter',
+                        coordinateSystem: 'geo' // 对应上方配置
+                    },
+                        {
+                            name: '启动次数', // 浮动框的标题
+                            type: 'map',
+                            geoIndex: 0,
+                            data: this.valueList
+                        }
+                    ]
+                });
+
+                //点击事件,根据点击某个省份计算出这个省份的数据
+                myChart.on('click', params => {
+                    console.log(params);
+                   //逻辑控制
+                    this.distributionCondition.provinceId = params.data.areaCode;
+                    this.drawDistributionBar();
+                });
+            },
             async getRentData() {
                 await this.axios({
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -219,17 +299,19 @@
             changeRentZone() {
                 this.drawRentLine();
             },
-            getProvinceList() {
+            async getProvinceList() {
                 this.axios.get(
                     "http://localhost:9000/getProvinceList"
                 ).then(res => {
                     if(res.data.result == 'success') {
+                        this.distributionCondition.provinceList = res.data.provinceList;
                         this.rentCondition.provinceList = res.data.provinceList;
                     }
                 }).catch(err => {
                     console.error(err);
                 });
                 this.drawRentLine();
+                this.drawDistributionBar();
             },
             getHospitalList() {
                 this.axios.get(

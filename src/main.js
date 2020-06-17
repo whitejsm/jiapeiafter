@@ -12,6 +12,7 @@ import axios from 'axios'
 import store from '@/store.js'
 import qs from 'qs'
 import VueParticles from 'vue-particles'
+
 Vue.use(VueParticles);
 axios.defaults.withCredentials=true;
 // Vueaxios.defaults.baseURL="http://localhost:9000"

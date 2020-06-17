@@ -8,13 +8,13 @@ import shareholder from '@/components/shareholder'  //股东/经销商
 import hospital from '@/components/hospital'        //医院
 import repair from '@/components/repair'            //维修人员
 import accounting from '@/components/accounting'    //会计
-import bedInfo from '@/components/bed/bedInfo'      //床位信息  
+import bedInfo from '@/components/bed/bedInfo'      //床位信息
 import faults from '@/components/aftersale/faults'    //故障
 import simpleReport from '@/components/SimpleReport'
 import visibleReport from '@/components/VisibleReport'
 import saleReport from '@/components/SaleReport'
 import echarts from 'echarts'
-
+import login2 from '@/components/login2'
 Vue.prototype.$echarts = echarts
 Vue.use(Router);
 
@@ -39,6 +39,7 @@ export default new Router({
           {component:simpleReport,path:"/simpleReport"},
           {component:visibleReport,path:"/visibleReport"},
           {component:saleReport,path:"/saleReport"},
-        ]}
+        ]},
+      {path: '/login2', name: ' ', component: login2},
     ]
 })
