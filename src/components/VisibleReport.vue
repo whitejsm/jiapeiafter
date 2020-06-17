@@ -97,8 +97,8 @@
                 </el-main>
             </el-container>
             <el-container style="width: 45%">
-                <el-main style="width: 100%; border: 1px solid black" id="distributionMapChart">
-
+                <el-main style="width: 100%; " id="distributionMapChart">
+                    <div style="width:100%; height: 370px" ref="myEchart"></div>
                 </el-main>
             </el-container>
         </el-container>
@@ -106,6 +106,9 @@
 </template>
 
 <script>
+    import echarts from "echarts";
+    import "../../node_modules/echarts/map/js/china.js";
+
     export default {
         name: "VisibleReport",
         data() {
@@ -150,8 +153,9 @@
             this.drawRentLine();
             this.getHospitalList();
             this.drawOccupancyLine();
-            this.getDistributionProvinceList();
-            this.drawDistributionBarLine();
+            // this.getDistributionProvinceList();
+            this.drawDistributionBar();
+            this.chinaConfigure();
         },
         methods: {
             async getProvinceValueList() {
@@ -383,20 +387,21 @@
                     }]
                 });
             },
-            getDistributionProvinceList() {
-                this.axios.get(
-                    "http://localhost:9000/getProvinceList"
-                ).then(res => {
-                    if(res.data.result == 'success') {
-                        this.distributionCondition.provinceList = res.data.provinceList;
-                    }
-                }).catch(err => {
-                    console.error(err);
-                });
-                this.drawDistributionBarLine();
-            },
+            // async getDistributionProvinceList() {
+            //     this.axios.get(
+            //         "http://localhost:9000/getProvinceList"
+            //     ).then(res => {
+            //         if(res.data.result == 'success') {
+            //             this.distributionCondition.provinceList = res.data.provinceList;
+            //             this.valueList = res.data.valueList;
+            //         }
+            //     }).catch(err => {
+            //         console.error(err);
+            //     });
+            //     this.drawDistributionBar();
+            // },
             changeDistributionProvince() {
-                this.drawDistributionBarLine();
+                this.drawDistributionBar();
             },
             async getDistributionData() {
                 await this.axios({
@@ -415,7 +420,7 @@
                     console.error(err);
                 })
             },
-            async drawDistributionBarLine() {
+            async drawDistributionBar() {
                 await this.getDistributionData();
                 // 基于准备好的dom，初始化echarts实例
                 console.log(this.distributionCondition.cityNameList)
