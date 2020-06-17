@@ -72,7 +72,7 @@
             if (value === '') {
               callback(new Error('请输入密码'));
             } else {
-              let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}/;
+              let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}$/;
               if (!check.test(value)) {
                 callback(new Error('以字母开头，只能包含字母、数字，6-18位!'));
               }
