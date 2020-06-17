@@ -1,6 +1,6 @@
 <template>
     <el-main>
-        <el-row>
+        <el-row v-if="roleId == 1 || roleId == 3 || roleId == 7">
             <el-col :span="2">
                 <span>分销商</span>
             </el-col>
@@ -19,10 +19,10 @@
         </el-row>
         <br/>
         <el-row>
-            <el-col :span="2">
+            <el-col :span="2" v-if="roleId == 1 || roleId == 3 || roleId == 7">
                 <span>选择医院</span>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="6" v-if="roleId == 1 || roleId == 3 || roleId == 7">
                 <el-select v-model="hospitalId" placeholder="--选择医院--"
                             @change="changeHospital">
                     <el-option :value="-1" label="选择医院"></el-option>
@@ -34,10 +34,10 @@
                     </el-option>
                 </el-select>
             </el-col>
-            <el-col :span="2">
+            <el-col :span="2" v-if="roleId == 1 || roleId == 3 || roleId == 7 || roleId == 5">
                 <span>选择科室</span>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="6" v-if="roleId == 1 || roleId == 3 || roleId == 7 || roleId == 5">
                 <el-select v-model="departmentId" placeholder="--选择科室--">
                     <el-option :value="-1" label="选择科室"></el-option>
                     <el-option
@@ -56,7 +56,7 @@
 
         <el-row>
             <el-col :span="2">
-                <el-button size="small">导出报表</el-button>
+                <el-button size="small" @click="getFile">导出报表</el-button>
             </el-col>
             <el-col :span="dateWidth" style="float:right">
                 <!-- 日选择器，选择到月份 -->
@@ -80,9 +80,9 @@
         </el-row>
         <br/>
         <el-row style="background-color: #e3f5ff; border-radius: 0px; padding: 15px 10px">
-            <i class="el-icon-user-solid"></i>&nbsp;&nbsp;床位数（张）: {{total}}
+            <i class="el-icon-user-solid"></i>&nbsp;&nbsp;床位数（张）: {{bedCount}}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            租赁次数（次）: {{total}}
+            租赁次数（次）: {{leaseCount}}
         </el-row>
 
         <el-table :data="tableData" border>
@@ -90,12 +90,12 @@
                 <template slot-scope="scope">{{scope.$index + 1}}</template>
             </el-table-column>
             <el-table-column prop="orderDate" label="日期"></el-table-column>
-            <el-table-column prop="distributorName" label="分销商"></el-table-column>
-            <el-table-column prop="hospitalName" label="医院名称"></el-table-column>
+            <el-table-column prop="distributorName" label="分销商" v-if="roleId != 5 && roleId != 6"></el-table-column>
+            <el-table-column prop="hospitalName" label="医院名称" v-if="roleId != 6"></el-table-column>
             <el-table-column prop="departmentName" label="科室名称"></el-table-column>
             <el-table-column prop="bedCount" label="床位数（张）"></el-table-column>
             <el-table-column prop="leaseCount" label="租赁次数（张）"></el-table-column>
-            <el-table-column prop="rentCount" label="总租金（元）"></el-table-column>
+            <el-table-column prop="rentCount" label="总租金（元）" v-if="roleId == 1 || roleId == 3"></el-table-column>
         </el-table>
         <el-pagination
                 style="text-align: center"
@@ -114,6 +114,9 @@
         data() {
             return {
                 // 筛选条件标签列表
+                roleId: null,
+                bedCount: 0,
+                leaseCount: 0,
                 departmentList: null,
                 hospitalList: null,
                 distributorList: null,
@@ -141,14 +144,32 @@
             }
         },
         mounted() {
-            var roleId = this.$store.state.roleId;
-            if(roleId == 7) {
-                this.getDistributorList();
-            }
-
+            this.roleId = this.$store.state.roleId;
+            // if(roleId == 1 || roleId == 3) {
+            //     // 超级管理员、会计
+            //     this.getAllDistributorList();
+            // }
+            // else if(roleId == 7) {
+            //     // 分销商
+            //     this.getDistributorList();
+            // }
+            this.getSaleInitData();
             this.getReportList();
         },
         methods: {
+            getSaleInitData() {
+                this.axios.get(
+                    "http://localhost:9000/getSaleInitData"
+                ).then(res => {
+                    if(res.data.result == 'success') {
+                        this.departmentList = res.data.departmentList;
+                        this.hospitalList = res.data.hospitalList;
+                        this.distributorList = res.data.distributorList;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                })
+            },
             changeHospital() {
                 var obj = this.hospitalList.find(
                     item=>{
@@ -156,41 +177,44 @@
                     }
                 );
                 this.departmentList = (typeof obj !== 'undefined' ? obj.departmentList : null);
-                console.log(this.departmentList)
                 this.departmentId = -1;
             },
-            getDistributorList() {
-                this.axios.get(
-                    "http://localhost:9000/getDistributor"
-                ).then(res => {
-                    if(res.data.result == 'success') {
-                        this.distributorList = res.data.distributorList;
-                        this.getHospitalList();
-                    }
-                }).catch(err => {
-                    console.error(err);
-                })
-            },
+            // getDistributorList() {
+            //     this.axios.get(
+            //         "http://localhost:9000/getDistributor"
+            //     ).then(res => {
+            //         if(res.data.result == 'success') {
+            //             this.distributorList = res.data.distributorList;
+            //             this.getHospitalList();
+            //         }
+            //     }).catch(err => {
+            //         console.error(err);
+            //     })
+            // },
             getHospitalList() {
                 this.hospitalList = null;
                 this.hospitalId = -1;
                 this.departmentList = null;
                 this.departmentId = -1;
-                this.axios({
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    method: 'get',
-                    url: 'http://localhost:9000/getDistributorHospital',
-                    params: {
-                        distributorId: this.distributorId
-                    }
-                }).then(res => {
-                    if (res.data.result == 'success') {
-                        console.log(res.data.hospitalList);
-                        this.hospitalList = res.data.hospitalList;
-                    }
-                }).catch(err => {
-                    console.error(err);
-                })
+
+                if (this.distributorId == -1) {
+                    this.getSaleInitData();
+                } else {
+                    this.axios({
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        method: 'get',
+                        url: 'http://localhost:9000/getDistributorHospital',
+                        params: {
+                            distributorId: this.distributorId
+                        }
+                    }).then(res => {
+                        if (res.data.result == 'success') {
+                            this.hospitalList = res.data.hospitalList;
+                        }
+                    }).catch(err => {
+                        console.error(err);
+                    })
+                }
             },
             changePage(pageNum) {
                 this.pageNum = pageNum;
@@ -218,18 +242,21 @@
                 this.dateInit();
                 // 直接获取按年显示数据
                 this.selectType = 'YEAR';
+                this.getReportList();
             },
             getMonth() {
                 this.month.isClick = false;
                 this.dateWidth = 4;
                 // 根据选择月显示每日数据
                 this.selectType = 'DAY';
+                this.getReportList();
             },
             getYear() {
                 this.year.isClick = false;
                 this.dateWidth = 4;
                 // 根据选择年显示每月数据
                 this.selectType = 'MONTH';
+                this.getReportList();
             },
             getReportList() {
                 this.axios({
@@ -252,10 +279,23 @@
                         this.total = res.data.pageBean.total;
                         this.pageSize = res.data.pageBean.pageSize;
                         this.pageNum = res.data.pageBean.pageNum;
+                        this.bedCount = res.data.bedCount;
+                        this.leaseCount = res.data.leaseCount;
                     }
                 }).catch(err => {
                     console.error(err);
                 })
+            },
+            getFile() {
+                let param = "?";
+                param += "hospitalId=" + this.hospitalId;
+                param += "&departmentId=" + this.departmentId;
+                param += "&distributorId=" + this.distributorId;
+                param += "&selectType=" + (this.selectType == null ? '' : this.selectType);
+                param += "&year=" + this.year.value;
+                param += "&month=" + this.month.value;
+                console.log(param);
+                location.href="http://localhost:9000/downloadSaleReportFile" + param;
             }
         },
         filters: {

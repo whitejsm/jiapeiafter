@@ -1,9 +1,7 @@
 <template>
 
   <div class="login">
-    <div style="font-size: 60px;color: beige;text-align: center;padding-top: 70px;z-index: 9999;position: absolute;left: 0;
-    right: 0;
-    margin: auto;">
+    <div class="bt" >
       佳陪陪护床后台管理系统
     </div>
     <div id="apppp">
@@ -42,7 +40,8 @@
           <el-input prefix-icon="el-icon-s-cooperation"
                     placeholder="请输入密码"
                     v-model="loginForm.password"
-                    type="password"></el-input>
+                    type="password"
+          ></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary" @click="loginValidate">登录</el-button>
@@ -69,7 +68,7 @@
             ],
             password: [
               { required: true, message: '请输入密码', trigger: 'blur' },
-              { min: 8, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
+              { min: 6, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
             ]
           }
         }
@@ -136,7 +135,7 @@
   .login-box {
     height: 300px;
     width: 450px;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.2);
     border-radius: 5px;
     position: absolute;
     top: 60%;
@@ -170,5 +169,20 @@
   .btns {
     display: flex;
     justify-content: flex-end;
+  }
+  .bt{
+    font-size: 60px;
+    color: beige;
+    text-align: center;
+    padding-top: 70px;
+    z-index: 9999;
+    position: absolute;
+    left: 0;
+    right: 0;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    margin: auto;
   }
 </style>
