@@ -64,11 +64,13 @@
           loginRules: {
             username: [
               { required: true, message: '请输入账号', trigger: 'blur' },
-              { min: 6, max: 12, message: '请输入正确的账号格式', trigger: 'blur' }
+              { min: 6, max: 12, message: '请输入正确的账号格式', trigger: 'blur' },
+              { pattern: /^[A-Za-z0-9]+$/, message: '只能输入字母和数字，不允许输入特殊符号' }
             ],
             password: [
               { required: true, message: '请输入密码', trigger: 'blur' },
-              { min: 6, max: 16, message: '请输入正确的密码格式', trigger: 'blur' }
+              { min: 6, max: 16, message: '请输入正确的密码格式', trigger: 'blur' },
+              { pattern: /^[A-Za-z0-9]+$/, message: '只能输入字母和数字，不允许输入特殊符号' }
             ]
           }
         }
@@ -134,7 +136,7 @@
   }
   .login-box {
     height: 300px;
-    width: 450px;
+    width: 400px;
     background-color: rgba(255,255,255,0.2);
     border-radius: 5px;
     position: absolute;
@@ -157,6 +159,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
+      user-select: none;
     }
   }
   .login-form {
