@@ -112,6 +112,16 @@
                 }
             }
         },
+        created() {
+            // 2 系统管理员 4 维修人员 5 医院管理员 6 科室管理员 7 经销商  8 股东 无权限
+            if (this.$store.state.roleId != 1 & this.$store.state.roleId != 3) {
+                this.$message({
+                    message: '你没有相应的权限',
+                    type: 'warning',
+                });
+                this.$router.push('/Main');
+            }
+        },
         mounted() {
             this.getCountInfo();
             this.getSimpleReportList();
