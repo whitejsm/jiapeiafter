@@ -455,14 +455,14 @@
             console.error(err);
           })
       },
-      changeDepartment(event){
-        const id=this.allHospitalData[event-1].hospitalId;
+      changeDepartment(){
+        console.log(this.dept.hospitalId);
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'post',
           url: 'http://localhost:9000/getDepartments',
           params:{
-            hospitalId:id,
+            hospitalId:this.dept.hospitalId,
           }
         })
           .then(res => {
