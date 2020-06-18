@@ -83,7 +83,7 @@
             }
           };
           var validatePass2 = (rule, value, callback) => {
-            let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}/;
+            let check = /^[a-zA-Z]{1}[a-zA-Z1-7]{5,17}$/;
             if (value === '') {
               callback(new Error('请再次输入密码'));
             } else if (value !== this.ruleForm.pass) {

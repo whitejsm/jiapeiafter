@@ -352,6 +352,7 @@
         this.dialogFormVisible=false;
       },
       findAll(){
+        this.loading=true;
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'get',
@@ -387,7 +388,7 @@
       },
     },
     created() {
-      if (this.$store.state.roleId !=4||this.$store.state.roleId !=1) {
+      if (this.$store.state.roleId !=4&this.$store.state.roleId !=1) {
         this.$message({
           message: '你没有相应的权限',
           type: 'warning',

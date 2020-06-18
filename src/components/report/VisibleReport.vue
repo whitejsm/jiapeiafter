@@ -148,6 +148,17 @@
                 valueList: null
             }
         },
+        created() {
+            // 2 系统管理员 3 会计 4 维修人员 8 股东 无权限
+            if (this.$store.state.roleId != 1 & this.$store.state.roleId != 5
+                        & this.$store.state.roleId != 6 & this.$store.state.roleId != 7) {
+                this.$message({
+                    message: '你没有相应的权限',
+                    type: 'warning',
+                });
+                this.$router.push('/Main');
+            }
+        },
         mounted() {
             this.getProvinceList();
             this.drawRentLine();

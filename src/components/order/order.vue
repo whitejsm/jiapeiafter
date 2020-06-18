@@ -1,6 +1,10 @@
 <template>
     <el-main>
         <el-row>
+            首页 / 订单管理 / 订单信息
+        </el-row>
+        <br />
+        <el-row>
             <el-col :span="8">
                 <el-input placeholder="请输入订单号" v-model="ordersId" size="200px">
                     <el-button slot="append" icon="el-icon-search"></el-button>
@@ -75,7 +79,7 @@
             <i class="el-icon-user-solid"></i>&nbsp;&nbsp;总订单数: {{total}}
         </el-row>
 
-        <el-table :data="tableData" border>
+        <el-table :data="tableData" border v-loading="loadStatus">
             <el-table-column prop="date" label="id" width="40">
                 <template slot-scope="scope">{{scope.$index + 1}}</template>
             </el-table-column>
@@ -89,10 +93,9 @@
             <el-table-column prop="createTime" label="下单时间" width="150">
                 <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button type="small info" @click="getDetail(scope.row)">详情</el-button>
-                    <el-button type="small danger">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -111,7 +114,7 @@
 <!--                accept="xlsx"-->
 <!--                :on-success="uploadSuccess"-->
 <!--                :on-error="uploadFailed"-->
-<!--                v-if="false">-->
+<!--                >-->
 <!--            <el-button size="small" type="primary">点击上传</el-button>-->
 <!--            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>-->
 <!--        </el-upload>-->
@@ -138,13 +141,13 @@
                         <el-col :span="3" :offset="1">归还时间:</el-col>
                         <el-col :span="4">{{currentOrder.endTime | dateFormat}}</el-col>
                         <el-col :span="3" :offset="1">是否异常:</el-col>
-                        <el-col :span="4">{{currentOrder.ordersStatus != null ? '是' : '否'}}</el-col>
+                        <el-col :span="4">{{currentOrder.faultId != null ? '是' : '否'}}</el-col>
                     </el-row>
                     <el-row style="margin-top: 30px">
                         <el-col :span="3" :offset="1">异常类型:</el-col>
-                        <el-col :span="4">{{currentOrder.ordersStatus}}</el-col>
-                        <el-col :span="3" :offset="1">退还租金:</el-col>
-                        <el-col :span="4">已退回</el-col>
+                        <el-col :span="4">{{currentOrder.faultId != null ? currentOrder.fault.faultType : ''}}</el-col>
+<!--                        <el-col :span="3" :offset="1">退还租金:</el-col>-->
+<!--                        <el-col :span="4">已退回</el-col>-->
                     </el-row>
                 </el-col>
             </el-row>
@@ -202,6 +205,7 @@
         name: "Order.vue",
         data() {
             return {
+                loadStatus: true,
                 tableData: null,
                 hospitalList: null,
                 departmentList: null,
@@ -218,6 +222,18 @@
                 currentBed: '',
                 currentCustomer: '',
                 timeLength: '',
+            }
+        },
+        created() {
+            // 3 会计 4 维修人员 8 股东 无权限
+            if (this.$store.state.roleId != 1 & this.$store.state.roleId != 2
+                    & this.$store.state.roleId != 5 & this.$store.state.roleId != 6
+                    & this.$store.state.roleId != 7) {
+                this.$message({
+                    message: '你没有相应的权限',
+                    type: 'warning',
+                });
+                this.$router.push('/Main');
             }
         },
         mounted() {
@@ -250,6 +266,7 @@
                 this.dateRange = [new Date(0), new Date()];
             },
             getOrderList() {
+                this.loadStatus = true;
                 this.axios({
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     method: 'get',
@@ -275,6 +292,7 @@
                         this.pageSize = res.data.pageBean.pageSize;
                         this.pageNum = res.data.pageBean.pageNum;
                     }
+                    this.loadStatus = false;
                 }).catch(err => {
                     console.error(err);
                 })
