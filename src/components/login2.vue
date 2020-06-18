@@ -2,7 +2,7 @@
   <div class="homepage-hero-module">
     <div class="video-container">
       <div :style="fixStyle" class="filter">
-        <div class="login">
+        <div class="login" v-show="showVideo">
           <div class="login-box">
             <div class="login-head">
               佳陪陪护床
@@ -28,15 +28,15 @@
           </div>
         </div>
       </div>
-<!--      <video :style="fixStyle" autoplay loop class="fillWidth" v-on:canplay="canplay">-->
-<!--        <source src="../assets/mp4/25.mp4" type="video/mp4"/>-->
-<!--        浏览器不支持 video 标签，建议升级浏览器。-->
-<!--        <source src="../assets/mp4/25.mp4" type="video/webm"/>-->
-<!--        浏览器不支持 video 标签，建议升级浏览器。-->
-<!--      </video>-->
-<!--      <div class="poster hidden" v-if="!vedioCanPlay">-->
-<!--        <img :style="fixStyle" src="../assets/mp4/25.mp4" alt="">-->
-<!--      </div>-->
+      <video :style="fixStyle" autoplay loop class="fillWidth" v-on:canplay="canplay" @ended="endVideo()">
+        <source src="../assets/mp4/25.mp4" type="video/mp4"/>
+        浏览器不支持 video 标签，建议升级浏览器。
+        <source src="../assets/mp4/25.mp4" type="video/webm"/>
+        浏览器不支持 video 标签，建议升级浏览器。
+      </video>
+      <div class="poster hidden" v-if="!vedioCanPlay">
+        <img :style="fixStyle" src="../assets/mp4/25.mp4" alt="">
+      </div>
     </div>
   </div>
 </template>
@@ -46,6 +46,7 @@
         name: "login2",
       data() {
         return {
+            showVideo: false,
           vedioCanPlay: false,
           fixStyle: '',
           loginForm: {
@@ -111,7 +112,7 @@
             .catch(err => {
               console.error(err);
             })
-        }
+        },
       },
       mounted: function() {
         window.onresize = () => {
@@ -140,7 +141,10 @@
             }
           }
         }
-        window.onresize()
+        window.onresize();
+        window.addEventListener('load', () => {
+                this.showVideo = true;
+        });
       }
     }
 </script>
