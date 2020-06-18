@@ -46,7 +46,7 @@
         name: "login2",
       data() {
         return {
-            showVideo: false,
+            showVideo: true,
           vedioCanPlay: false,
           fixStyle: '',
           loginForm: {
@@ -142,9 +142,9 @@
           }
         }
         window.onresize();
-        window.addEventListener('load', () => {
-                this.showVideo = true;
-        });
+        // window.addEventListener('load', () => {
+        //         this.showVideo = true;
+        // });
       }
     }
 </script>
