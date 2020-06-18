@@ -1,6 +1,6 @@
 # jiapeiafter
 
-> A Vue.js project
+> 佳陪后台前端工程化项目
 
 ## Build Setup
 
