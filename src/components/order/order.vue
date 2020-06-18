@@ -114,7 +114,7 @@
 <!--                accept="xlsx"-->
 <!--                :on-success="uploadSuccess"-->
 <!--                :on-error="uploadFailed"-->
-<!--                v-if="false">-->
+<!--                >-->
 <!--            <el-button size="small" type="primary">点击上传</el-button>-->
 <!--            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>-->
 <!--        </el-upload>-->
@@ -222,6 +222,18 @@
                 currentBed: '',
                 currentCustomer: '',
                 timeLength: '',
+            }
+        },
+        created() {
+            // 3 会计 4 维修人员 8 股东 无权限
+            if (this.$store.state.roleId != 1 & this.$store.state.roleId != 2
+                    & this.$store.state.roleId != 5 & this.$store.state.roleId != 6
+                    & this.$store.state.roleId != 7) {
+                this.$message({
+                    message: '你没有相应的权限',
+                    type: 'warning',
+                });
+                this.$router.push('/Main');
             }
         },
         mounted() {
