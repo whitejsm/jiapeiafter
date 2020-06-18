@@ -60,7 +60,7 @@
                         end-placeholder="结束日期">
                     </el-date-picker>
                     <el-button type="middle"  @click="findAll()">搜索</el-button>
-                    <el-button type="middle">清除</el-button>
+                    <el-button type="middle" @click="clearCondition()">清除</el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -257,6 +257,14 @@ export default {
         }
     },
     methods: {
+        clearCondition(){
+            this.repairCondition.repairId="";
+            this.repairCondition.hospitalId="-1";
+            this.repairCondition.departmentId="-1";
+            this.repairCondition.repairmanId="-1";
+            this.repairCondition.repairStatus="-1";
+            this.timeSelect=[new Date("2019/01/01 00:00:00"),new Date()];
+        },
         findAll(){
             this.loading=true;
             this.axios({

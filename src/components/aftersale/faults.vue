@@ -100,7 +100,7 @@
                 end-placeholder="结束日期">
             </el-date-picker>
             <el-button type="middle"  @click="findAll()">搜索</el-button>
-            <el-button type="middle">清除</el-button>
+            <el-button type="middle" @click="clearCondition()">清除</el-button>
             </div>
         </el-col>
         </el-row>
@@ -486,6 +486,16 @@
             }
         },
         methods:{
+            clearCondition(){
+                this.faultCondition.faultId="";
+                this.faultCondition.hospitalId="-1";
+                this.faultCondition.departmentId="-1";
+                this.faultCondition.faultType="-1";
+                this.faultCondition.faultStatus="-1";
+                this.faultCondition.repairStatus="-1";
+                this.faultCondition.faultSource="-1";
+                this.timeSelect=[new Date("2019/01/01 00:00:00"),new Date()];
+            },
             findAll(){
                 this.loading=true;
                 this.axios({
@@ -963,7 +973,8 @@
                 params+="userInfoId="+this.$store.state.id;
                 console.log(params);
                 window.location.href="http://localhost:9000/faults/downloadFaultFile"+params;
-            }
+            },
+            
         },
         filters:{//局部过滤器
              //时间过滤器

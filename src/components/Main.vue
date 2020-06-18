@@ -182,6 +182,22 @@
           if (this.$store.state.id==null){
             window.location.href = '/';
           }
+
+
+          //加载小人
+          setTimeout(() => {
+            window.L2Dwidget.init({
+              pluginRootPath: 'static/live2dw/',
+              pluginJsPath: 'lib/',
+              pluginModelPath: 'live2d-widget-model-koharu/assets/',
+              tagMode: false,
+              debug: false,
+              model: { jsonPath: '/static/live2dw/live2d-widget-model-wanko/assets/wanko.model.json' },
+              display: { position: 'right', width: 150, height: 200 },
+              mobile: { show: true },
+              log: false
+            })
+          }, 1000)
         },
       mounted() {
           this.axios({
