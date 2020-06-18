@@ -212,7 +212,9 @@
       <div class="block">
         <el-form   >
           <el-form-item label="医院"  >
-        <el-select v-model="dept.hospitalId" placeholder="请选择医院" @change="changeDepartment($event)">
+        <el-select v-model="dept.hospitalId"
+                   filterable
+                   placeholder="请选择医院" @change="changeDepartment($event)">
           <el-option
             v-for="item in allHospitalData"
             :key="item.hospitalId"
@@ -696,6 +698,15 @@
       check(){
         this.findAllAccounting();
       },
+    },
+    created() {
+      if (this.$store.state.roleId !=2&this.$store.state.roleId !=1) {
+        this.$message({
+          message: '你没有相应的权限',
+          type: 'warning',
+        });
+        this.$router.push('/Main');
+      }
     },
     mounted() {
       this.findAllAccounting()
