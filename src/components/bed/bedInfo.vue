@@ -96,6 +96,7 @@
     <el-button type="primary" @click="add()">添加信息</el-button>
     共{{total}}条记录<hr>
     <el-table
+        v-loading="loading"
         :data="tableData"
         stripe
         style="width:100%"
@@ -348,7 +349,7 @@ export default {
             manufacturerList:null,
             flag:false,
             number:null,
-
+            loading:"",
             bed:{
                 bedId:"",
                 hospitalId:"-1",
@@ -412,6 +413,7 @@ export default {
         },
         //查询数据
         findByExample(){
+            this.loading=true;
             this.axios({
                 method:'get',
                 url: "http://localhost:9000/bed/findByExample",
@@ -438,6 +440,7 @@ export default {
                 this.bed.hospitalList=res.data.hospitalList;
                 this.hospitalList=res.data.hospitalList;
                 this.total=res.data.pageBean.total;
+                this.loading=false;
             })
             .catch(err => {
                 console.error(err); 

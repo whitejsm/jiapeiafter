@@ -78,14 +78,14 @@
         </el-row>
     
 <!--信息展示模块-->
-    <el-table :data="repairList" stripe style="width:100%" ref="multipleTable">
+    <el-table :data="repairList" stripe style="width:100%" ref="multipleTable" v-loading="loading">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="repairId" label="维修ID" width="160"></el-table-column>
-        <el-table-column prop="fault.faultId" label="故障ID" width="70"></el-table-column>
-        <el-table-column prop="fault.faultType" label="故障类型" width="150"></el-table-column>
-        <el-table-column prop="userInfo.name" label="维修人" width="150"></el-table-column>
-        <el-table-column prop="repairStatus" label="维修状态" width="150"></el-table-column>
-        <el-table-column prop="createTime" label="维修时间" width="150">
+        <el-table-column prop="repairId" label="维修ID" width="180"></el-table-column>
+        <el-table-column prop="fault.faultId" label="故障ID" width="100"></el-table-column>
+        <el-table-column prop="fault.faultType" label="故障类型" width="170"></el-table-column>
+        <el-table-column prop="userInfo.name" label="维修人" width="170"></el-table-column>
+        <el-table-column prop="repairStatus" label="维修状态" width="170"></el-table-column>
+        <el-table-column prop="createTime" label="维修时间" width="170">
             <template slot-scope="scope">{{scope.row.createTime | dateFormat}}</template>
         </el-table-column>
 
@@ -233,6 +233,7 @@ export default {
                 beginTime:null,
                 endTime:null,
             },
+            loading:true,
             hospitalList:null,
             departmentList:null,
             repairmanList:null,
@@ -257,6 +258,7 @@ export default {
     },
     methods: {
         findAll(){
+            this.loading=true;
             this.axios({
                 method:'post',
                 url: "http://localhost:9000/repair/findAll",
@@ -276,7 +278,8 @@ export default {
                 this.repairList=res.data.repairList;
                 this.hospitalList=res.data.hospitalList;
                 this.total=res.data.pageBean.total;
-                this.pageSize=res.data.pageBean.pageSize
+                this.pageSize=res.data.pageBean.pageSize;
+                this.loading=false;
             })
             .catch(err => {
                 console.error(err); 
