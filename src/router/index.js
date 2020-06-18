@@ -10,16 +10,11 @@ import repair from '@/components/personnel/repair'            //维修人员
 import accounting from '@/components/personnel/accounting'    //会计
 import bedInfo from '@/components/bed/bedInfo'      //床位信息
 import faults from '@/components/aftersale/faults'    //故障
-<<<<<<< HEAD
-import repairInfo from '@/components/aftersale/repair'    //维修记录
-import simpleReport from '@/components/SimpleReport'
-import visibleReport from '@/components/VisibleReport'
-import saleReport from '@/components/SaleReport'
-=======
 import simpleReport from '@/components/report/SimpleReport'
 import visibleReport from '@/components/report/VisibleReport'
 import saleReport from '@/components/report/SaleReport'
->>>>>>> 9905a0867485cd6e437974493321d664acb53216
+import department from '@/components/hospital/Department'
+import hospitalinfo from '@/components/hospital/Hospital'
 import echarts from 'echarts'
 import login2 from '@/components/login2'
 Vue.prototype.$echarts = echarts
@@ -43,18 +38,12 @@ export default new Router({
           {component:accounting,path:"/personnel/accounting"},
           {component:bedInfo,path:"/bed/bedInfo"},
           {component:faults,path:"/aftersale/faults"},
-<<<<<<< HEAD
-          {component:simpleReport,path:"/simpleReport"},
-          {component:visibleReport,path:"/visibleReport"},
-          {component:saleReport,path:"/saleReport"},
-          {component:repairInfo,path:"/aftersale/repair"},
-        ]}
-=======
           {component:simpleReport,path:"/report/simpleReport"},
           {component:visibleReport,path:"/report/visibleReport"},
           {component:saleReport,path:"/report/saleReport"},
+          {component:hospitalinfo,path:"/hospital/Hospital"},
+          {component:department,path:"/hospital/Department"},
         ]},
       {path: '/login2', name: ' ', component: login2},
->>>>>>> 9905a0867485cd6e437974493321d664acb53216
     ]
 })
