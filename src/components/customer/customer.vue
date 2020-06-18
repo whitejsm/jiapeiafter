@@ -153,6 +153,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="resetPs">重置密码</el-button>
         <el-button type="primary" @click="updateYes">保 存</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
@@ -253,6 +254,25 @@
       }
     },
     methods:{
+      resetPs(){
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'post',
+          url: 'http://localhost:9000/resetCustomerPassword',
+          params:{
+            customerId:this.form.customerId,
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '密码重置成功！',
+              type: 'success'
+            });
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
       downloadXlsOrders(){
         let params = "?";
         params+="customerId="+this.cid;
@@ -365,6 +385,15 @@
       check(){
         this.findAll();
       },
+    },
+    created() {
+      if (this.$store.state.roleId !=4||this.$store.state.roleId !=1) {
+        this.$message({
+          message: '你没有相应的权限',
+          type: 'warning',
+        });
+        this.$router.push('/Main');
+      }
     },
     mounted() {
       this.findAll()

@@ -14,6 +14,8 @@ import repairInfo from '@/components/aftersale/repair'    //维修
 import simpleReport from '@/components/report/SimpleReport'
 import visibleReport from '@/components/report/VisibleReport'
 import saleReport from '@/components/report/SaleReport'
+import department from '@/components/hospital/Department'
+import hospitalinfo from '@/components/hospital/Hospital'
 import echarts from 'echarts'
 import login2 from '@/components/login2'
 Vue.prototype.$echarts = echarts
@@ -40,6 +42,8 @@ export default new Router({
           {component:simpleReport,path:"/report/simpleReport"},
           {component:visibleReport,path:"/report/visibleReport"},
           {component:saleReport,path:"/report/saleReport"},
+          {component:hospitalinfo,path:"/hospital/Hospital"},
+          {component:department,path:"/hospital/Department"},
           {component:repairInfo,path:"/aftersale/repair"},
         ]},
       {path: '/login2', name: ' ', component: login2},
