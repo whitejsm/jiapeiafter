@@ -43,7 +43,6 @@
                 <el-option label="电量不足" value="电量不足"></el-option>
                 <el-option label="柜门未开" value="柜门未开"></el-option>
                 <el-option label="硬件缺失" value="硬件缺失"></el-option>
-                <el-option label="其他" value="其他"></el-option>
             </el-select>
         </el-col>
         </el-row>
@@ -63,7 +62,7 @@
         
         <el-col :span="8">
             <span>维修状态</span>
-            <el-select v-model="faultCondition.repairStatus"  placeholder="---请选择故障状态">
+            <el-select v-model="faultCondition.repairStatus"  placeholder="---请选择维修状态">
                 <el-option label="所有状态" value="-1"></el-option>
                 <el-option label="待备案" value="待备案"></el-option>
                 <el-option label="待维修" value="待维修"></el-option>
@@ -88,7 +87,7 @@
         <el-row>
         <el-col :span="18">
             <div class="block">
-            <span class="demonstration">出厂日期：</span>
+            <span class="demonstration">创建日期：</span>
             <el-date-picker
                 v-model="timeSelect"
                 type="daterange"
@@ -107,7 +106,7 @@
         <br/>
 </div>  
 
-    <el-button type="danger"  @click="getChecked()">删除选中</el-button>
+    <el-button type="danger"  @click="getChecked()">获得选中ID</el-button>
     <el-button type="primary" @click="exportFault()">导出故障</el-button>
     <el-button type="primary" @click="addFault()">添加信息</el-button>
     共{{total}}条记录<hr>
@@ -117,19 +116,6 @@
         stripe
         style="width:100%"
         ref="multipleTable">
-    
-    <!--可展开的行-->
-    <!-- <el-table-column type="expand">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="录入时间:">
-            <span>{{ props.row.createTime | dateFormat}}</span>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column> -->
-
-
     <el-table-column
       type="selection"
       width="55">
@@ -188,7 +174,7 @@
         <template slot-scope="scope">
             <el-button type="primary" size="small" icon="el-icon-tickets" circle @click="openDetails(scope.row)"></el-button>
             <el-button type="danger" size="small" icon="el-icon-delete" circle @click="delFaultById(scope.row.faultId)"></el-button>
-            <el-button type="success" size="mini" @click="putOnRecord(scope.row)" v-if="$store.state.roleId!=5&$store.state.roleId!=6&scope.row.faultStatus=='待备案'">备案</el-button>
+            <el-button type="success" size="mini" @click="putOnRecord(scope.row)" v-if="$store.state.roleId==4&scope.row.faultStatus=='待备案'">备案</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -289,7 +275,7 @@
             <el-dialog width="700px" title="故障编辑页" :visible.sync="editFaults" append-to-body :before-close="handleClose">
                 <el-form>
                     <el-form-item label="故障ID" :label-width="formWidth">
-                        <el-input v-model="faultAdd.faultId" autocomplete="off"></el-input>
+                        <el-input v-model="faultAdd.faultId" autocomplete="off" disabled="disabled"></el-input>
                     </el-form-item>
                     <el-form-item label="故障标题" :label-width="formWidth">
                         <el-input v-model="faultAdd.faultTitle" autocomplete="off"></el-input>
@@ -540,6 +526,7 @@
                 return y + "/" + m + "/" + d +" "+ hh + ":" + mm + ":" + ss
             },
             getDepartment(){
+                this.faultCondition.departmentId="-1";
                 this.axios({
                     method:'get',
                     url: "http://localhost:9000/faults/findDepartment",
@@ -925,6 +912,7 @@
                     url: "http://localhost:9000/faults/saveFaultUpdate",
                     params: {
                         faultId:this.faultAdd.faultId,
+                        faultType:this.faultAdd.faultType,
                         contactorId:this.faultAdd.userInfoId,
                         bedId:this.faultAdd.bedId,
                         faultTitle:this.faultAdd.faultTitle,
@@ -938,6 +926,7 @@
                                     message: res.data.msg,
                                 });
                                 this.editFaults = false;
+                                this.openDetail = false;
                                 this.findAll();
                                 this.init();
                             }else{
@@ -969,7 +958,7 @@
                 params+="roleId="+this.$store.state.roleId+"&";
                 params+="userInfoId="+this.$store.state.id;
                 console.log(params);
-                window.location.href="http://localhost:9000/faults/downloadFaultFile";
+                window.location.href="http://localhost:9000/faults/downloadFaultFile"+params;
             }
         },
         filters:{//局部过滤器
@@ -994,3 +983,6 @@
 <style scoped>
 
 </style>
+
+
+

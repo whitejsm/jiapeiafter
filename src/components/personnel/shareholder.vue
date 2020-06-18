@@ -129,7 +129,7 @@
         label="操作"
         width="200">
         <template slot-scope="scope">
-          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.password,scope.row.isdelete,scope.row.roles[0].rolename,scope.row.shareholder)">编辑信息</el-button>
+          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row)">编辑信息</el-button>
           <el-button type="success"  size="small" plain @click="showTable(scope.row.userinfoId,scope.row.roles[0].rolename)">负责医院</el-button>
         </template>
       </el-table-column>
@@ -162,10 +162,6 @@
         </el-form-item>
         <el-form-item label="人员邮箱" prop="email" :label-width="formLabelWidth">
           <el-input v-model="form.email" autocomplete="off"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
-          <el-input v-model="form.password" autocomplete="off"
           ></el-input>
         </el-form-item>
         <el-form-item label="角色切换"  :label-width="formLabelWidth">
@@ -203,6 +199,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="resetPs">重置密码</el-button>
         <el-button type="primary" @click="updateValidate">保 存</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
@@ -297,7 +294,7 @@
 
 <script>
   export default {
-    name: "Shareholder",
+    name: "shareholder",
     data() {
       return {
         userlevel: [{
@@ -410,7 +407,6 @@
           wechat:'',
           gender:'',
           isdelete:'',
-          password:'',
           level:'',
           shareholder:''
         },
@@ -422,6 +418,25 @@
       }
     },
     methods:{
+      resetPs(){
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'post',
+          url: 'http://localhost:9000/resetPassword',
+          params:{
+            userinfoId:this.form.userinfoId,
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '密码重置成功！',
+              type: 'success'
+            });
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
       downloadXls(){
         let params = "?";
         params+="phonenumber="+this.searchInput+"&";
@@ -463,22 +478,21 @@
         this.searchInput='';
         this.role='';
       },
-      showUpdate(userinfoId,name,phonenumber,wechat,email,password,isdelete,rolename,shareholder){
-        console.log(rolename);
+      showUpdate(row){
+        console.log(row.roles[0].rolename);
         this.dialogFormVisible=true;
-        this.form.userinfoId=userinfoId;
-        this.form.name=name;
-        this.form.phonenumber=phonenumber;
-        this.form.wechat=wechat;
-        this.form.email=email;
-        this.form.password=password;
-        this.form.isdelete=isdelete;
-        if(rolename=='股东'){
+        this.form.userinfoId=row.userinfoId;
+        this.form.name=row.name;
+        this.form.phonenumber=row.phonenumber;
+        this.form.wechat=row.wechat;
+        this.form.email=row.email;
+        this.form.isdelete=row.isdelete;
+        if(row.roles[0].rolename=='股东'){
           this.form.level=true;
-        }else if(rolename=='分销商'){
+        }else if(row.roles[0].rolename=='分销商'){
           this.form.level=false;
         }
-        this.form.shareholder=shareholder;
+        this.form.shareholder=row.shareholder;
         console.log(this.form.level);
       },
       updateYes(){

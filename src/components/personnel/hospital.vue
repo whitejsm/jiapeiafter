@@ -11,6 +11,20 @@
     </el-row>
     <br/>
     <el-row>
+      <el-col :span="8">
+        <span>人员角色</span>
+        <el-select v-model="role" clearable  placeholder="请选择人员角色">
+          <el-option
+            v-for="item in userlevel"
+            :key="item.level"
+            :label="item.label"
+            :value="item.level">
+          </el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+    <br/>
+    <el-row>
       <el-col :span="18">
         <div class="block">
           <span class="demonstration">加入日期</span>
@@ -33,9 +47,9 @@
     <br>
     <div>
       <el-divider content-position="left">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogAddVisible = true">添加会计</el-button>
+        <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogAddVisible = true">添加人员</el-button>
         <el-button type="success" icon="el-icon-download" @click="downloadXls">导出报表</el-button>
-        <i class="el-icon-user"></i>  会计总数:{{countAccounting}}
+        <i class="el-icon-user"></i>  人员总数:{{countMedical}}
       </el-divider>
     </div>
     <el-table
@@ -45,18 +59,25 @@
       style="width: 100%">
       <el-table-column
         prop="username"
-        label="会计账号"
+        label="人员账号"
         width="100">
       </el-table-column>
       <el-table-column
         prop="name"
-        label="会计姓名"
-        >
+        label="人员姓名"
+        width="70"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="roles[0].rolename"
+        label="人员角色"
+      >
       </el-table-column>
       <el-table-column
         prop="gender"
         label="性别"
-        >
+        width="50"
+      >
         <template slot-scope="scope">{{ scope.row.gender | genderFormat }}</template>
       </el-table-column>
       <el-table-column
@@ -72,18 +93,18 @@
       <el-table-column
         prop="email"
         label="电子邮箱"
-        width="200">
+        >
       </el-table-column>
       <el-table-column
         prop="birth"
         label="出生日期"
-        >
+      >
         <template slot-scope="scope">{{ scope.row.birth | dateFormat2 }}</template>
       </el-table-column>
       <el-table-column
         prop="createTime"
         label="加入时间"
-        width="200">
+        >
         <template slot-scope="scope">{{ scope.row.createTime | dateFormat }}</template>
       </el-table-column>
       <el-table-column
@@ -91,7 +112,7 @@
         label="操作"
         width="150">
         <template slot-scope="scope">
-          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.password,scope.row.isdelete)">编辑信息</el-button>
+          <el-button type="primary"  size="small" plain @click="showUpdate(scope.row.userinfoId,scope.row.name,scope.row.phonenumber,scope.row.wechat,scope.row.email,scope.row.isdelete,scope.row.roles[0].rolename)">编辑信息</el-button>
         </template>
       </el-table-column>
 
@@ -107,27 +128,31 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="编辑会计信息" :visible.sync="dialogFormVisible">
+    <el-dialog title="编辑人员信息" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="addRules" ref="updateForm">
-        <el-form-item label="会计姓名" prop="name" :label-width="formLabelWidth">
+        <el-form-item label="人员姓名" prop="name" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
-        <el-form-item label="会计手机号码" prop="phonenumber" :label-width="formLabelWidth">
+        <el-form-item label="人员手机号码" prop="phonenumber" :label-width="formLabelWidth">
           <el-input v-model="form.phonenumber" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
-        <el-form-item label="会计微信" prop="wechat" :label-width="formLabelWidth">
+        <el-form-item label="人员微信" prop="wechat" :label-width="formLabelWidth">
           <el-input v-model="form.wechat" autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="会计邮箱" prop="email" :label-width="formLabelWidth">
+        <el-form-item label="人员邮箱" prop="email" :label-width="formLabelWidth">
           <el-input v-model="form.email" autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
-          <el-input v-model="form.password" autocomplete="off"
-          ></el-input>
+
+        <el-form-item label="角色切换"  :label-width="formLabelWidth">
+          <el-switch
+            v-model="form.level"
+            active-text="科室对接人"
+            inactive-text="医院对接人">
+          </el-switch>
         </el-form-item>
         <el-form-item label="账号是否启用"  :label-width="formLabelWidth">
           <el-switch
@@ -138,43 +163,48 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="resetPs">重置密码</el-button>
         <el-button type="primary" @click="updateValidate">保 存</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="添加会计信息" :visible.sync="dialogAddVisible">
+    <el-dialog title="添加人员信息" :visible.sync="dialogAddVisible">
       <el-form :model="add" :rules="addRules" ref="addForm">
         <el-form-item label="登录账户" prop="username" :label-width="formLabelWidth">
           <el-input v-model="add.username" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
-        <el-form-item label="会计姓名" prop="name" :label-width="formLabelWidth">
+        <el-form-item label="人员姓名" prop="name" :label-width="formLabelWidth">
           <el-input v-model="add.name" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
         <el-form-item label="手机号码" prop="phonenumber" :label-width="formLabelWidth">
           <el-input v-model="add.phonenumber" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
         <el-form-item label="微信" prop="wechat" :label-width="formLabelWidth">
           <el-input v-model="add.wechat" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
           <el-input v-model="add.email" autocomplete="off"
-                    ></el-input>
+          ></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="gender" :label-width="formLabelWidth">
-            <el-radio v-model="add.gender" label="1"  border size="medium">男</el-radio>
-            <el-radio v-model="add.gender" label="0"  border size="medium">女</el-radio>
+          <el-radio v-model="add.gender" label="1"  border size="medium">男</el-radio>
+          <el-radio v-model="add.gender" label="0"  border size="medium">女</el-radio>
+        </el-form-item>
+        <el-form-item label="人员角色" prop="level" :label-width="formLabelWidth">
+          <el-radio v-model="add.level" label="1"  border size="medium">医院对接人</el-radio>
+          <el-radio v-model="add.level" label="0"  border size="medium">科室对接人</el-radio>
         </el-form-item>
         <el-form-item label="出生年月" prop="birth" :label-width="formLabelWidth">
-        <el-date-picker
-          v-model="add.birth"
-          type="date"
-          placeholder="选择日期">
-        </el-date-picker>
+          <el-date-picker
+            v-model="add.birth"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -188,9 +218,17 @@
 
 <script>
   export default {
-    name: "accounting",
+    name: "hospital",
     data() {
       return {
+        userlevel: [{
+          level: '1',
+          label: '医院对接人'
+        }, {
+          level: '0',
+          label: '科室对接人'
+        }],
+        role: '',
         loading:true,
         pickerOptions: {
           shortcuts: [{
@@ -222,7 +260,7 @@
         timeSelect:[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')],
         searchInput:'',
         tableData: '',
-        countAccounting:'',
+        countMedical:'',
         dialogFormVisible: false,
         dialogAddVisible: false,
         add: {
@@ -232,7 +270,8 @@
           email:'',
           wechat:'',
           gender:'',
-          birth:''
+          birth:'',
+          level:'',
         },
         addRules: {
           username: [
@@ -268,6 +307,9 @@
           birth: [
             { required: true, message: '请选择出生日期', trigger: 'blur' }
           ],
+          level: [
+            { required: true, message: '请选择人员类型', trigger: 'blur' }
+          ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
             { min: 6, max: 18, message: '限制长度为6-18位,', trigger: 'blur' },
@@ -282,7 +324,7 @@
           wechat:'',
           gender:'',
           isdelete:'',
-          password:''
+          level:'',
         },
         formLabelWidth: '120px',
         pageNum:1,
@@ -292,33 +334,60 @@
       }
     },
     methods:{
+      resetPs(){
+        this.axios({
+          headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
+          method:'post',
+          url: 'http://localhost:9000/resetPassword',
+          params:{
+            userinfoId:this.form.userinfoId,
+          }
+        })
+          .then(res => {
+            this.$message({
+              message: '密码重置成功！',
+              type: 'success'
+            });
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
       downloadXls(){
         let params = "?";
         params+="phonenumber="+this.searchInput+"&";
+        params+="role="+this.role+"&";
         params+="startTime="+new Date(this.timeSelect[0]).toLocaleDateString()+"&";
         params+="endTime="+new Date(this.timeSelect[1]).toLocaleDateString();
         console.log(params);
-        window.location.href="http://localhost:9000/downloadAccount"+params;
+        window.location.href="http://localhost:9000/downloadHospitalers"+params;
       },
       clearAll(){
         this.timeSelect=[new Date('2019/01/01 00:00:00' ),new Date('2022/01/01 00:00:00')];
-        this.searchInput=''
+        this.searchInput='';
+        this.role='';
       },
-      showUpdate(userinfoId,name,phonenumber,wechat,email,password,isdelete){
+      showUpdate(userinfoId,name,phonenumber,wechat,email,isdelete,rolename){
+        console.log(rolename);
         this.dialogFormVisible=true;
         this.form.userinfoId=userinfoId;
         this.form.name=name;
         this.form.phonenumber=phonenumber;
         this.form.wechat=wechat;
         this.form.email=email;
-        this.form.password=password;
         this.form.isdelete=isdelete;
+        if(rolename=='医院对接人'){
+          this.form.level=true;
+        }else if(rolename=='科室对接人'){
+          this.form.level=false;
+        }
+        console.log(this.form.level);
       },
       updateYes(){
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'post',
-          url: 'http://localhost:9000/updateAccounting',
+          url: 'http://localhost:9000/updateMedical',
           params:{
             userinfoId:this.form.userinfoId,
             name:this.form.name,
@@ -326,7 +395,8 @@
             email:this.form.email,
             wechat:this.form.wechat,
             password:this.form.password,
-            isdelete:this.form.isdelete
+            isdelete:this.form.isdelete,
+            level:this.form.level,
           }
         })
           .then(res => {
@@ -357,7 +427,7 @@
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'post',
-          url: 'http://localhost:9000/addAccounting',
+          url: 'http://localhost:9000/addMedical',
           params:{
             username:this.add.username,
             name: this.add.name,
@@ -366,6 +436,7 @@
             wechat:this.add.wechat,
             gender:this.add.gender,
             birth:new Date(this.add.birth).toLocaleDateString(),
+            level:this.add.level,
           }
         })
           .then(res => {
@@ -383,7 +454,8 @@
               email:'',
               wechat:'',
               gender:'',
-              birth:''
+              birth:'',
+              level:'',
             }
           })
           .catch(err => {
@@ -395,34 +467,37 @@
         this.dialogAddVisible=false;
         this.add= {
           username:'',
-            name: '',
-            phonenumber:'',
-            email:'',
-            wechat:'',
-            gender:'',
-            birth:''
+          name: '',
+          phonenumber:'',
+          email:'',
+          wechat:'',
+          gender:'',
+          birth:''
         }
       },
       findAllAccounting(){
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'get',
-          url: 'http://localhost:9000/getAllAccounting',
+          url: 'http://localhost:9000/getAllMedical',
           params:{
             "pageNum":this.pageNum,
             "pageSize":this.pageSize,
             "phonenumber":this.searchInput,
+            role:this.role,
             startTime:new Date(this.timeSelect[0]).toLocaleDateString(),
             endTime:new Date(this.timeSelect[1]).toLocaleDateString(),
+
           }
         })
           .then(res => {
             console.log(res.data);
             this.loading=false;
-            this.tableData = res.data.accountingList;
-            this.countAccounting = res.data.countAccounting;
+            this.tableData = res.data.medicalList;
+            this.countMedical = res.data.countMedical;
             this.total=res.data.pageBean.total;
             this.pages=res.data.pageBean.pages;
+            console.log(this.tableData);
           })
           .catch(err => {
             console.error(err);

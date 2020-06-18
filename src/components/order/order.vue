@@ -104,28 +104,17 @@
                 :page-size="pageSize"
                 @current-change="changePage">
         </el-pagination>
-        <el-upload
-                class="upload-demo"
-                action="http://localhost:9000/uploadOrderFile/"
-                accept="xlsx"
-                :on-success="uploadSuccess"
-                :on-error="uploadFailed">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>
-        </el-upload>
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!--        上传测试-->
+<!--        <el-upload-->
+<!--                class="upload-demo"-->
+<!--                action="http://localhost:9000/uploadOrderFile/"-->
+<!--                accept="xlsx"-->
+<!--                :on-success="uploadSuccess"-->
+<!--                :on-error="uploadFailed"-->
+<!--                v-if="false">-->
+<!--            <el-button size="small" type="primary">点击上传</el-button>-->
+<!--            <div slot="tip" class="el-upload__tip">请上传xlsx文件</div>-->
+<!--        </el-upload>-->
 
         <el-dialog  :visible.sync="dialogTableVisible" width="70%">
             <el-row>
