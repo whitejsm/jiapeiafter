@@ -993,6 +993,25 @@
         mounted() {
             this.findAll();
         },
+        created() {
+        //1.超级管理员
+        //2.系统管理员
+        //3.会计
+        //4.维修
+        //5.医院对接
+        //6.科室对接
+        //7.分销商
+        //8.股东
+        if (this.$store.state.roleId != 1 & this.$store.state.roleId != 2
+                & this.$store.state.roleId != 5 & this.$store.state.roleId != 6 & this.$store.state.roleId != 4
+                ) {
+            this.$message({
+                message: '你没有相应的权限',
+                type: 'warning',
+            });
+            this.$router.push('/Main');
+        }
+    },
     }
 </script>
 <style scoped>
