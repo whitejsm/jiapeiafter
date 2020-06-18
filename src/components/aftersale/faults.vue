@@ -43,6 +43,7 @@
                 <el-option label="电量不足" value="电量不足"></el-option>
                 <el-option label="柜门未开" value="柜门未开"></el-option>
                 <el-option label="硬件缺失" value="硬件缺失"></el-option>
+                <el-option label="其他" value="其他"></el-option>  
             </el-select>
         </el-col>
         </el-row>
@@ -115,6 +116,7 @@
         :data="faultList"
         stripe
         style="width:100%"
+        v-loading="loading"
         ref="multipleTable">
     <el-table-column
       type="selection"
@@ -446,7 +448,7 @@
                     beginTime:"",
                     endTime:"",
                 },
-
+                loading:"",
                 timeSelect:[new Date("2019/01/01 00:00:00"),new Date()],
                 hospitalList:null,
                 departmentList:null,
@@ -485,6 +487,7 @@
         },
         methods:{
             findAll(){
+                this.loading=true;
                 this.axios({
                     method:'get',
                     url: "http://localhost:9000/faults/findAll",
@@ -509,6 +512,7 @@
                     this.hospitalList=res.data.hospitalList;
                     this.faultList=res.data.faultList;
                     this.total=res.data.pageBean.total;
+                    this.loading=false;
                 })
                 .catch(err => {
                     console.error(err); 
