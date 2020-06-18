@@ -8,16 +8,14 @@
   <!--搜索组件-->
 <el-row>
       <el-col :span="8">
-        <el-input placeholder="请输入床位ID" v-model="bedId" size="200px">
-          <el-button slot="append" icon="el-icon-search" @click="findByExample()"></el-button>
-        </el-input>
+        <el-input placeholder="请输入床位ID" v-model="bedId" size="200px"></el-input>
       </el-col>
     </el-row>
     <br/>
     <el-row>
       <el-col :span="8">
         <span>医院：</span>
-        <el-select v-model="hospitalId" clearable  placeholder="---请选择医院" @change="getDepartment()">
+        <el-select v-model="hospitalId" placeholder="---请选择医院" @change="getDepartment()">
           <el-option label="所有医院" value="-1"></el-option>
           <el-option
                   v-for="item in hospitalList"
@@ -29,7 +27,7 @@
       </el-col>
       <el-col :span="8">
       <span>科室：</span>
-        <el-select v-model="departmentId" clearable  placeholder="---请选择科室">
+        <el-select v-model="departmentId"  placeholder="---请选择科室">
           <el-option  label="所有科室" value="-1"></el-option>
           <el-option
                   v-for="item in departmentList"
@@ -44,7 +42,7 @@
     <el-row>
       <el-col :span="8">
         <span>状态：</span>
-        <el-select v-model="status" clearable  placeholder="---请选择床位状态">
+        <el-select v-model="status"  placeholder="---请选择床位状态">
           <el-option label="所有状态" value="-1"></el-option>
           <el-option label="停用" value="停用"></el-option>
           <el-option label="空闲" value="空闲"></el-option>
@@ -55,7 +53,7 @@
       </el-col>
       <el-col :span="8">
         <span>电量：</span>
-        <el-select v-model="power" clearable  placeholder="---请选择电量">
+        <el-select v-model="power"  placeholder="---请选择电量">
           <el-option label="所有" value="-1"></el-option>
           <el-option label="低于20%" value="20"></el-option>
           <el-option label="低于40%" value="40"></el-option>
@@ -82,8 +80,8 @@
             end-placeholder="结束日期"
             @change="changeDate()">
           </el-date-picker>
-          <el-button type="small"  @click="findByExample()">确认</el-button>
-          <el-button type="small">清除</el-button>
+          <el-button   @click="findByExample()">搜  索</el-button>
+          <el-button  @click="clearCondition()">清  除</el-button>
         </div>
       </el-col>
     </el-row>
@@ -91,10 +89,21 @@
 
 
     <el-button type="danger"  @click="delChecked()">获得选中ID</el-button>
-    <el-button type="primary" @click="delChecked()">导入床位</el-button>
     <el-button type="primary" @click="exportBed()">导出床位</el-button>
     <el-button type="primary" @click="add()">添加信息</el-button>
-    共{{total}}条记录<hr>
+    <el-button type="primary" @click="downTemplate()">下载模板</el-button>共{{total}}条记录
+<!--上传测试-->
+       <hr/><el-upload
+               class="upload-demo"
+               action="http://localhost:9000/bed/uploadBedFile/"
+               accept="xlsx"
+               :on-success="uploadSuccess"
+               :on-error="uploadFailed"
+               >
+           <el-button type="primary">点击上传</el-button>
+           <div slot="tip" class="el-upload__tip" style="width:100px;height:">请上传xlsx文件</div>
+       </el-upload>
+    
     <el-table
         v-loading="loading"
         :data="tableData"
@@ -207,9 +216,9 @@
 <!-- 添加的模态框 -->
 <el-dialog title="添加" :visible.sync="bedInfoAdd" width="700px">
   <el-form>
-    <el-form-item label="设备ID" :label-width="formWidth">
+    <!-- <el-form-item label="设备ID" :label-width="formWidth">
       <el-input v-model="bed.bedId" autocomplete="off"></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="所属医院" :label-width="formWidth">
       <el-select v-model="bed.hospitalId" @change="getDepartmentDialog()">
           <el-option label="请选择医院" value="-1"></el-option>
@@ -266,9 +275,9 @@
 <!-- 修改的模态框 -->
 <el-dialog title="修改" :visible.sync="bedInfoUpd" width="700px">
   <el-form>
-    <el-form-item label="设备ID" :label-width="formWidth">
+    <!-- <el-form-item label="设备ID" :label-width="formWidth">
       <el-input v-model="bed.bedId" autocomplete="off" disabled="disabled"></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="所属医院" :label-width="formWidth">
       <el-select v-model="bed.hospitalId" @change="getDepartmentDialog()">
           <el-option label="请选择医院" value="-1"></el-option>
@@ -370,6 +379,7 @@ export default {
             formWidth: '120px',
         }
     },
+    
     mounted() {
         this.findByExample();
         console.log("this.$store.state.count-------------"+this.$store.state.count)
@@ -393,6 +403,15 @@ export default {
       }
     },
     methods:{
+      //清除搜索条件
+      clearCondition(){
+        this.bedId="";
+        this.hospitalId="-1";
+        this.departmentId="-1";
+        this.status="-1";
+        this.power="-1";
+        this.timeSelect=[new Date("2019/01/01 00:00:00"),new Date()];
+      },
       //初始化添加时的数据
         init(){
             this.bed={
@@ -584,15 +603,6 @@ export default {
         },
         //生产商变换的时候调用
         manufacturerChange(manufacturerId){
-            /*
-asdasdasdasdsdfxcvdvjishavhaahjkfjbcvncvxcbmzvbmxvbnxbvmvz
-sdjfbsadfbansdbfasfhsakfhdlasdhflsadjkflasdlfasd
-sfjasfjasdfjaskgdfjasdfhasdggaj
-asdfbasdgfjashdflkasdjflkasdhf
-sfdjaskdfsakdfksadfasfhasjkfhlkalh
-这里不用改发请求，后边看看怎么改
-
-            */
             console.log(manufacturerId);
             this.axios({
               method:'get',
@@ -613,35 +623,26 @@ sfdjaskdfsakdfksadfasfhasjkfhlkalh
         },
         //添加的保存按钮事件
         save(){
-            
-            let checkBedId = /^[a-zA-Z]{5}$/
-            if(!checkBedId.test(this.bed.bedId)){
-              this.$notify({
-                title: '床位ID输入有误',
-                message: this.$createElement('b', { style: 'color: red'}, '请输入5位的床位ID---例：abcde')
-              });
-            }else {
-              this.checkOut();
-              if(this.flag){
-                  this.axios({
-                    method:'post',
-                    url: 'http://localhost:9000/bed/save',
-                    params: {
-                        bedId:this.bed.bedId,
-                        manufacturerId:this.manufacturer.manufacturerId,
-                        departmentId:this.bed.departmentId,
-                        number:this.bed.number,
-                    }
+            this.checkOut();
+            if(this.flag){
+                this.axios({
+                  method:'post',
+                  url: 'http://localhost:9000/bed/save',
+                  params: {
+                      bedId:this.bed.bedId,
+                      manufacturerId:this.manufacturer.manufacturerId,
+                      departmentId:this.bed.departmentId,
+                      number:this.bed.number,
+                  }
+                })
+                .then(res => {
+                    this.bedInfoAdd = false;
+                    this.findByExample();
                   })
-                  .then(res => {
-                      this.bedInfoAdd = false;
-                      this.findByExample();
-                    })
-                    .catch(err => {
-                        console.error(err); 
-                    })
-               }
-            }
+                  .catch(err => {
+                      console.error(err); 
+                  })
+              }
         },
         //保存修改
         saveUpd(){
@@ -724,8 +725,37 @@ sfdjaskdfsakdfksadfasfhasjkfhlkalh
             console.log(params);
             window.location.href="http://localhost:9000/bed/downloadBedFile"+params;
             
+        },
+        uploadSuccess(response, file, fileList) {
+            console.log("success");
+        },
+        uploadFailed(err, file, fileList) {
+            console.log("error");
+        },
+        downTemplate(){
+            window.location.href="http://localhost:9000/bed/downBedTemplate";
         }
-    }
+    },
+    created() {
+        //1.超级管理员
+        //2.系统管理员
+        //3.会计
+        //4.维修
+        //5.医院对接
+        //6.科室对接
+        //7.分销商
+        //8.股东
+        if (this.$store.state.roleId != 1 & this.$store.state.roleId != 2
+                & this.$store.state.roleId != 5 & this.$store.state.roleId != 6
+                ) {
+            this.$message({
+                message: '你没有相应的权限',
+                type: 'warning',
+            });
+            this.$router.push('/Main');
+        }
+    },
+
 }
 </script>
 <style scoped>

@@ -98,6 +98,7 @@
 
 <div style="border:1px solid blue ;margin-bottom:20px; margin-top:20px; backgroundColor:white">
 <el-button type="primary" @click="insertReady()">新增</el-button>
+<el-button type="primary">主要按钮</el-button>
 
 <el-dialog
   
@@ -254,7 +255,7 @@ v-loading="loading"
       prop="distributor.name"
       label="经销商">
     </el-table-column>
-    <el-table-column label="操作">
+    <el-table-column label="操作" width="200">
       <template slot-scope="scope">
         <el-button
           size="mini"
@@ -306,7 +307,7 @@ v-loading="loading"
 
    <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-left:30px;margin-bottom:30px;" ><span>创建时间:{{findOne.time}}</span></div>
     </div>
-    <div style="border:1px solid blue ;width: 1250px;height:330px;margin-bottom:20px; margin-top:20px; backgroundColor:white">
+    
  <el-table
       :data="findOne.dept"
       style="width: 100%">
@@ -331,7 +332,7 @@ v-loading="loading"
     </el-table>
 
 
-    </div>
+    
 
   <span slot="footer" class="dialog-footer">
     <el-button @click="centerDialogVisible1 = false">取 消</el-button>
@@ -865,6 +866,8 @@ this.insert = this.$options.data().insert;
                
               this.HospitalSearch = this.$options.data().HospitalSearch; 
       },
+       
+    
       insertsave(){
         var myInsert = this.insert;
         var myDistributor = myInsert.distributor1;
@@ -978,7 +981,9 @@ this.insert = this.$options.data().insert;
         this.flag='0';
         this.centerDialogVisible = true
       }
+      
     },
+    
     mounted() {
       
         
