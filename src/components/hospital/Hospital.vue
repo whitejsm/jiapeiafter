@@ -210,6 +210,10 @@
 
 <div style="border:1px solid blue ;margin-bottom:20px;  margin-top:20px; backgroundColor:white">
 <el-table
+v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
     :data="list"
     stripe
     style="width: 100%">
@@ -376,6 +380,7 @@
         currentPage:1,
         totalcount:1,
         pageSize:1,
+        loading:true,
         centerDialogVisible: false,
         centerDialogVisible1: false,
         HospitalSearch: {
@@ -851,11 +856,13 @@ this.insert = this.$options.data().insert;
                    this.totalcount = res.data.pb.totalCount;
                    //console.log(this.pageSize);
                    //console.log(this.totalcount);
+                   this.loading=false;
                    
                 })
                .catch(err => {
                    console.error(err); 
                })
+               
               this.HospitalSearch = this.$options.data().HospitalSearch; 
       },
       insertsave(){
