@@ -195,7 +195,7 @@
                     this.axios({
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         method: 'get',
-                        url: 'http://localhost:9000/getDistributorHospital',
+                        url: 'http://localhost:9000/hospital/getDistributorHospital',
                         params: {
                             distributorId: this.distributorId
                         }

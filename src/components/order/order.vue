@@ -238,7 +238,7 @@
         },
         mounted() {
             this.axios.get(
-                "http://localhost:9000/getAllHospital"
+                "http://localhost:9000/hospital/getAllHospital"
             ).then(res => {
                 if(res.data.result == 'ok') {
                     this.hospitalList = res.data.hospitalList;

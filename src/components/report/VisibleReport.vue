@@ -330,7 +330,7 @@
             },
             getHospitalList() {
                 this.axios.get(
-                    "http://localhost:9000/getHospitalList"
+                    "http://localhost:9000/hospital/getHospitalList"
                 ).then(res => {
                     if(res.data.result == 'success') {
                         this.occupancyCondition.hospitalList = res.data.hospitalList;
@@ -345,7 +345,9 @@
                         return item.hospitalId==this.occupancyCondition.hospitalId //筛选出对应数据
                     }
                 );
+                console.log(obj);
                 this.occupancyCondition.departmentList = (typeof obj !== 'undefined' ? obj.departmentList : null);
+                console.log(this.occupancyCondition.departmentList);
                 this.occupancyCondition.departmentId = -1;
                 this.drawOccupancyLine();
             },
