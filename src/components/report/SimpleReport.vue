@@ -95,7 +95,7 @@
                 rentCount: 0,
                 // 分页
                 total: 1,
-                pageSize: 1,
+                pageSize: 15,
                 pageNum: 1,
                 // 表格数据
                 tableData: null,

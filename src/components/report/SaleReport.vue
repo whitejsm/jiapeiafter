@@ -122,7 +122,7 @@
                 distributorList: null,
                 // 分页
                 total: 1,
-                pageSize: 1,
+                pageSize: 15,
                 pageNum: 1,
                 // 筛选条件
                 departmentId: -1,
