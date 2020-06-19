@@ -55,7 +55,7 @@
 </div>
 
 <div style="border:1px solid blue ;margin-bottom:20px; margin-top:20px; backgroundColor:white">
-<el-button type="primary" @click="insertReady()">新增</el-button>
+<el-button type="primary" v-if="rid==1||rid==2" @click="insertReady()">新增</el-button>
 
 <el-dialog
   
@@ -313,6 +313,7 @@ v-loading="loading"
           
         },
         flag:"0",
+        rid:"",
         list: null,
         distributors:null,
         province:null,
@@ -759,6 +760,7 @@ this.insert = this.$options.data().insert;
                    console.log(this.pageSize);
                    console.log(this.totalcount);
                    this.loading=false;
+                   this.rid = res.data.rid;
                    
                 })
                .catch(err => {
