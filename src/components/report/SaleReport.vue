@@ -122,7 +122,7 @@
                 distributorList: null,
                 // 分页
                 total: 1,
-                pageSize: 1,
+                pageSize: 15,
                 pageNum: 1,
                 // 筛选条件
                 departmentId: -1,
@@ -157,14 +157,6 @@
         },
         mounted() {
             this.roleId = this.$store.state.roleId;
-            // if(roleId == 1 || roleId == 3) {
-            //     // 超级管理员、会计
-            //     this.getAllDistributorList();
-            // }
-            // else if(roleId == 7) {
-            //     // 分销商
-            //     this.getDistributorList();
-            // }
             this.getSaleInitData();
             this.getReportList();
         },
@@ -191,18 +183,6 @@
                 this.departmentList = (typeof obj !== 'undefined' ? obj.departmentList : null);
                 this.departmentId = -1;
             },
-            // getDistributorList() {
-            //     this.axios.get(
-            //         "http://localhost:9000/getDistributor"
-            //     ).then(res => {
-            //         if(res.data.result == 'success') {
-            //             this.distributorList = res.data.distributorList;
-            //             this.getHospitalList();
-            //         }
-            //     }).catch(err => {
-            //         console.error(err);
-            //     })
-            // },
             getHospitalList() {
                 this.hospitalList = null;
                 this.hospitalId = -1;
@@ -215,7 +195,7 @@
                     this.axios({
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         method: 'get',
-                        url: 'http://localhost:9000/getDistributorHospital',
+                        url: 'http://localhost:9000/hospital/getDistributorHospital',
                         params: {
                             distributorId: this.distributorId
                         }
@@ -282,7 +262,7 @@
                         selectType: this.selectType,
                         year: this.year.value,
                         month: this.month.value,
-                        pageSize: this.pageSize,
+                        // pageSize: this.pageSize,
                         pageNum: this.pageNum,
                     }
                 }).then(res => {
