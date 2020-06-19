@@ -122,14 +122,16 @@
                         <el-col :span="4">{{currentRepair.repairId}}</el-col>
                         <el-col :span="3" :offset="1">维修状态:</el-col>
                         <el-col :span="4">{{currentRepair.repairStatus}}</el-col>
-                        <el-col :span="3" :offset="1">维修时间:</el-col>
-                        <el-col :span="4">{{currentRepair.createTime | dateFormat}}</el-col>
+                        <el-col :span="3" :offset="1">维修结果:</el-col>
+                        <el-col :span="4">{{currentRepair.repairResult}}</el-col>
                     </el-row>
                     <el-row style="margin-top: 30px">
                         <el-col :span="3" :offset="1">维修描述:</el-col>
                         <el-col :span="18">{{currentRepair.repairInstructions}}</el-col>
                     </el-row>
                     <el-row style="margin-top: 30px">
+                        <el-col :span="3" :offset="1">维修时间:</el-col>
+                        <el-col :span="4">{{currentRepair.createTime | dateFormat}}</el-col>
                         <el-col :span="3" :offset="1">维修人员:</el-col>
                         <el-col :span="4">{{currentRepair.userInfo.name}}</el-col>
                         <el-col :span="3" :offset="1">联系方式:</el-col>

@@ -659,6 +659,7 @@ export default {
                 })
                 .then(res => {
                     this.findByExample();
+                    this.bedInfoUpd=false;
                 })
                 .catch(err => {
                       console.error(err); 
