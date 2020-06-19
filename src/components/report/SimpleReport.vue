@@ -62,7 +62,7 @@
                     <template slot-scope="scope">{{scope.$index + 1}}</template>
                 </el-table-column>
                 <el-table-column prop="orderDate" label="日期"></el-table-column>
-                <el-table-column prop="bedCount" label="床位数（张）">
+                <el-table-column prop="bedCount" label="新增床位数（张）">
                     <template slot-scope="scope">{{ scope.row.bedCount == null ? 0 : scope.row.bedCount }}</template>
                 </el-table-column>
                 <el-table-column prop="leaseCount" label="租赁次数（张）">
@@ -95,7 +95,7 @@
                 rentCount: 0,
                 // 分页
                 total: 1,
-                pageSize: 1,
+                pageSize: 15,
                 pageNum: 1,
                 // 表格数据
                 tableData: null,
@@ -189,7 +189,7 @@
                         selectType: this.selectType,
                         year: this.year.value,
                         month: this.month.value,
-                        pageSize: this.pageSize,
+                        // pageSize: this.pageSize,
                         pageNum: this.pageNum,
                     }
                 }).then(res => {

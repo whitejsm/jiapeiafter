@@ -512,6 +512,15 @@
         this.findAllAccounting();
       },
     },
+    created() {
+      if (this.$store.state.roleId !=2&this.$store.state.roleId !=1) {
+        this.$message({
+          message: '你没有相应的权限',
+          type: 'warning',
+        });
+        this.$router.push('/Main');
+      }
+    },
     mounted() {
       this.findAllAccounting()
     },

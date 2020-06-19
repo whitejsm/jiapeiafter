@@ -212,7 +212,9 @@
       <div class="block">
         <el-form   >
           <el-form-item label="医院"  >
-        <el-select v-model="dept.hospitalId" placeholder="请选择医院" @change="changeDepartment($event)">
+        <el-select v-model="dept.hospitalId"
+                   filterable
+                   placeholder="请选择医院" @change="changeDepartment($event)">
           <el-option
             v-for="item in allHospitalData"
             :key="item.hospitalId"
@@ -421,7 +423,7 @@
         window.location.href="http://localhost:9000/downloadRepairman"+params;
       },
       closeRe(){
-        this.dept='';
+        this.dept.departmentId='';
         this.dialogTableVisible = false;
       },
       addDepartment(){
@@ -446,21 +448,21 @@
               message: '添加负责医院科室成功！',
               type: 'success'
             });
-            this.dept='';
+            this.dept.departmentId='';
             this.dialogTableVisible=false;
           })
           .catch(err => {
             console.error(err);
           })
       },
-      changeDepartment(event){
-        const id=this.allHospitalData[event-1].hospitalId;
+      changeDepartment(){
+        console.log(this.dept.hospitalId);
         this.axios({
           headers:  {'Content-Type': 'application/x-www-form-urlencoded'},
           method:'post',
           url: 'http://localhost:9000/getDepartments',
           params:{
-            hospitalId:id,
+            hospitalId:this.dept.hospitalId,
           }
         })
           .then(res => {
@@ -696,6 +698,15 @@
       check(){
         this.findAllAccounting();
       },
+    },
+    created() {
+      if (this.$store.state.roleId !=2&this.$store.state.roleId !=1) {
+        this.$message({
+          message: '你没有相应的权限',
+          type: 'warning',
+        });
+        this.$router.push('/Main');
+      }
     },
     mounted() {
       this.findAllAccounting()
