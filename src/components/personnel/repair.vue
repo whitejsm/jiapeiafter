@@ -423,7 +423,7 @@
         window.location.href="http://localhost:9000/downloadRepairman"+params;
       },
       closeRe(){
-        this.dept='';
+        this.dept.departmentId='';
         this.dialogTableVisible = false;
       },
       addDepartment(){
@@ -448,7 +448,7 @@
               message: '添加负责医院科室成功！',
               type: 'success'
             });
-            this.dept='';
+            this.dept.departmentId='';
             this.dialogTableVisible=false;
           })
           .catch(err => {
