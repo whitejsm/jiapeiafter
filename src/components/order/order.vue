@@ -17,7 +17,7 @@
                 <span>所属医院</span>
                 <el-select v-model="hospitalId" placeholder="--全部医院--"
                            @change="changeHospital($event)">
-                    <el-option value="-1" label="全部医院"></el-option>
+                    <el-option :value="-1" label="全部医院"></el-option>
                     <el-option
                             v-for="item in hospitalList"
                             :key="item.hospitalId"
@@ -29,7 +29,7 @@
             <el-col :span="8">
                 <span>所属科室</span>
                 <el-select v-model="departmentId" placeholder="--全部科室--">
-                    <el-option value="-1" label="全部科室"></el-option>
+                    <el-option :value="-1" label="全部科室"></el-option>
                     <el-option
                             v-for="item in departmentList"
                             :key="item.departmentId"
@@ -210,8 +210,8 @@
                 hospitalList: null,
                 departmentList: null,
                 ordersId: null,
-                hospitalId: '-1',
-                departmentId: '-1',
+                hospitalId: -1,
+                departmentId: -1,
                 ordersStatus: '所有状态',
                 dateRange: [new Date(0), new Date()],
                 total: 1,
@@ -250,13 +250,14 @@
             this.getOrderList();
         },
         methods: {
-            changeHospital(hIndex) {
-                if(hIndex > 0) {
-                    this.departmentList = this.hospitalList[hIndex-1].departmentList;
-                } else {
-                    this.departmentList = '';
-                }
-                this.departmentId = '-1';
+            changeHospital() {
+                var obj = this.hospitalList.find(
+                    item=>{
+                        return item.hospitalId==this.hospitalId //筛选出对应数据
+                    }
+                );
+                this.departmentList = (typeof obj !== 'undefined' ? obj.departmentList : null);
+                this.departmentId = -1;
             },
             clearCondition() {
                 this.ordersId = '';
@@ -281,7 +282,7 @@
                         createTime: this.dateFormatWithDiagonal(this.dateRange[0]),
                         endTime: this.dateFormatWithDiagonal(this.dateRange[1]),
 
-                        pageSize: this.pageSize,
+                        // pageSize: this.pageSize,
                         pageNum: this.pageNum,
                     }
                 }).then(res => {

@@ -100,7 +100,7 @@
       </el-form-item>
       </div> -->
 <div> 
-      {{insert.distributor1}}
+     
      <el-form-item label="医院"  >
   <el-select v-model="insert.distributor1"  placeholder="医院" >
       <el-option v-for="user in insert.distributor1s" :key="user.hospitalId" :value="user.hospitalId" :label="user.hospitalname" ></el-option>
@@ -181,7 +181,7 @@ v-loading="loading"
     </el-table-column>
 
     
-    <el-table-column label="操作">
+    <el-table-column label="操作" width="200" >
       <template slot-scope="scope">
         <el-button
           size="mini"
@@ -245,11 +245,11 @@ v-loading="loading"
   <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-left:30px;margin-bottom:30px;" ><span>对接人电话:{{findOne.phone}}</span></div>
   <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-bottom:30px;"><span>收益分成:{{findOne.share}}</span></div>
   <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-bottom:30px;"><span>医院对接人:{{findOne.hospitalmanname}}</span></div>
-
+<div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-left:30px;margin-bottom:30px;" ><span>创建时间:{{findOne.time}}</span></div>
    <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-left:30px;margin-bottom:30px;" ><span>维修人:{{findOne.distributor1}}</span></div>
 
 
-   <div style="width: 400px; height:30px; font-size: 20px ; float:left;margin-left:30px;margin-bottom:30px;" ><span>创建时间:{{findOne.time}}</span></div>
+   
     </div>
     
  <el-table
@@ -496,7 +496,7 @@ this.insert = this.$options.data().insert;
                         // this.findOne.card=res.data.bankcard;
                         this.findOne.share=res.data.revenueshare;
                         this.findOne.hospitalmanname=res.data.hospital.contactor.username;
-                        this.findOne.distributor1=res.data.repairman.man.username;
+                        
                         this.findOne.distributor1num=res.data.hospital.hospitalId;
                         this.findOne.depcount=res.data.bedList.length;
                         this.findOne.departmentId=res.data.departmentId;
@@ -515,6 +515,7 @@ this.insert = this.$options.data().insert;
                     const timeFormat= year + "/" + month + "/" + day + " " + hh + ":" + mm + ":" + ss;
                     this.findOne.time=timeFormat;
                 }
+                this.findOne.distributor1=res.data.repairman.man.username;
                 }
                     )
                     .catch(err => {
@@ -893,6 +894,13 @@ this.insert = this.$options.data().insert;
       'insert.rent'(newValue,oldValue){
         console.log(newValue+ "   "+oldValue+"  ");
         if(isNaN(newValue)||(parseInt(newValue)>20))  {
+          this.insert.rent = oldValue;
+          
+        }
+      },
+      'insert.share'(newValue,oldValue){
+        console.log(newValue+ "   "+oldValue+"  ");
+        if(isNaN(newValue)||(parseInt(newValue)>100))  {
           this.insert.rent = oldValue;
           
         }

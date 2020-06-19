@@ -398,19 +398,6 @@
                     }]
                 });
             },
-            // async getDistributionProvinceList() {
-            //     this.axios.get(
-            //         "http://localhost:9000/getProvinceList"
-            //     ).then(res => {
-            //         if(res.data.result == 'success') {
-            //             this.distributionCondition.provinceList = res.data.provinceList;
-            //             this.valueList = res.data.valueList;
-            //         }
-            //     }).catch(err => {
-            //         console.error(err);
-            //     });
-            //     this.drawDistributionBar();
-            // },
             changeDistributionProvince() {
                 this.drawDistributionBar();
             },
